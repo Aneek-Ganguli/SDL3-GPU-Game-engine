@@ -4,7 +4,7 @@
 #include "Window.h"
 
 int main(){
-    if(SDL_Init(SDL_INIT_VIDEO ) != 0){
+    if(!SDL_Init(SDL_INIT_VIDEO )){
         printf("Error initializing SDL: %s\n", SDL_GetError());
         return -1;
     }
