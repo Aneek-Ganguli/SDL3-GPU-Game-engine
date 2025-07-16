@@ -71,9 +71,9 @@ struct Window createWindow(){
     SDL_ClaimWindowForGPUDevice(s_device,s_window);
 
     SDL_GPUShader* frag = load_shader(s_device,"C:/Users/Reall/Desktop/SDL3 GPU c/bin/shader.spv.frag",SDL_GPU_SHADERSTAGE_FRAGMENT,
-    0,1,0,0);
-    SDL_GPUShader* vert = load_shader(s_device,"C:/Users/Reall/Desktop/SDL3 GPU c/bin/shader.spv.vert",SDL_GPU_SHADERSTAGE_VERTEX,
     0,0,0,0);
+    SDL_GPUShader* vert = load_shader(s_device,"C:/Users/Reall/Desktop/SDL3 GPU c/bin/shader.spv.vert",SDL_GPU_SHADERSTAGE_VERTEX,
+    0,1,0,0);
     return (struct Window){
             .window = s_window,
             .device = s_device,

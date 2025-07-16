@@ -50,7 +50,7 @@ int main(){
 
         mat4 mvp;
         glm_mat4_mul(Projection, model, mvp);
-        struct UBO ubo;
+        struct UBO ubo = {0};
         glm_mat4_copy(mvp, ubo.mvp);
 
         rotation += rotationSpeed * deltaTime;
