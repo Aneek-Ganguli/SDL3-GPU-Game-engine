@@ -19,7 +19,7 @@ int main(){
             }
         }
         newFrame(&window);
-
+        SDL_DrawGPUPrimitives(window.renderPass, 3, 1, 0, 0);
         endFrame(&window); 
     }
     
