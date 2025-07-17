@@ -9,7 +9,8 @@ struct UBO {
 };
 
 int main(){
-    if(!SDL_Init(SDL_INIT_VIDEO )){
+    
+    if(!SDL_Init(SDL_INIT_VIDEO)){
         printf("Error initializing SDL: %s\n", SDL_GetError());
         return -1;
     }

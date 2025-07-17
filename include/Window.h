@@ -14,7 +14,6 @@ struct Window{
     SDL_GPUShader* vertexShader;
     SDL_GPUShader* fragmentShader;
     SDL_GPUCopyPass* copyPass;
-    SDL_GPUVertexInputState vertexInput;
 };
 
 struct Window createWindow();

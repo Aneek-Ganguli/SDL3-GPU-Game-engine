@@ -75,26 +75,47 @@ struct Window   createWindow(){
     SDL_GPUShader* vert = load_shader(s_device,"C:/Users/Reall/Desktop/SDL3 GPU c/bin/shader.spv.vert",SDL_GPU_SHADERSTAGE_VERTEX,
     0,1,0,0);
 
+    SDL_GPUVertexInputState vertexInput = (SDL_GPUVertexInputState){
+                .num_vertex_buffers = 1,
+                .num_vertex_attributes = 1,
+                .vertex_buffer_descriptions = &(SDL_GPUVertexBufferDescription){
+                    .slot = 0,
+                    .pitch = sizeof(vec3),
+                    .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX,
+                    // .instance_step_rate = 0
+                },
+                .vertex_attributes = &(SDL_GPUVertexAttribute){
+                    .location = 0,
+                    .offset = 0,
+                    .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+                    .buffer_slot = 0
+                }
+    }; 
+
+    SDL_GPUGraphicsPipeline* pipeline = SDL_CreateGPUGraphicsPipeline(s_device,
+        &(SDL_GPUGraphicsPipelineCreateInfo){
+            .vertex_shader = vert,
+            .fragment_shader = frag,
+            .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
+            .target_info = (SDL_GPUGraphicsPipelineTargetInfo ){
+                .num_color_targets = 1,
+                .color_target_descriptions = &(SDL_GPUColorTargetDescription){
+                    .blend_state = (SDL_GPUColorTargetBlendState ){
+                        .enable_blend = false
+                    },
+                    .format = SDL_GetGPUSwapchainTextureFormat(s_device, s_window)
+                }
+            },
+            .vertex_input_state = vertexInput
+        }
+    );
 
     return (struct Window){
             .window = s_window,
             .device = s_device,
             .vertexShader = vert,
             .fragmentShader = frag,
-            .vertexInput = (SDL_GPUVertexInputState){
-                .num_vertex_buffers = 1,
-                .num_vertex_attributes = 1,
-                .vertex_buffer_descriptions = &(SDL_GPUVertexBufferDescription){
-                    .slot = 1,
-                    .pitch = sizeof(vec3),
-                    .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX
-                },
-                .vertex_attributes = &(SDL_GPUVertexAttribute){
-                    .location = 0,
-                    .offset = 0,
-                    .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3
-                }
-            } 
+            .pipeline = pipeline
         };
 }
 
@@ -122,23 +143,7 @@ void newFrame(struct Window *window){
         printf("Error begain render pass: %s \n",SDL_GetError());
     }
 
-    window->pipeline = SDL_CreateGPUGraphicsPipeline(window->device,
-        &(SDL_GPUGraphicsPipelineCreateInfo){
-            .vertex_shader = window->vertexShader,
-            .fragment_shader = window->fragmentShader,
-            .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
-            .target_info = (SDL_GPUGraphicsPipelineTargetInfo ){
-                .num_color_targets = 1,
-                .color_target_descriptions = &(SDL_GPUColorTargetDescription){
-                    .blend_state = (SDL_GPUColorTargetBlendState ){
-                        .enable_blend = false
-                    },
-                    .format = SDL_GetGPUSwapchainTextureFormat(window->device, window->window)
-                }
-            },
-            .vertex_input_state = window->vertexInput
-        }
-    );
+
 
     SDL_BindGPUGraphicsPipeline(window->renderPass,window->pipeline);
 
