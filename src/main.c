@@ -18,7 +18,22 @@ int main(){
     int width, height;
 	SDL_GetWindowSize(window.window, &width, &height);
 
+    vec3 verts[3] = {
+        {-1.0f, -1.0f, 0.0f },
+		{ 1.0f, -1.0f, 0.0f },
+		{ 0.0f,  1.0f, 0.0f }    
+    };
     
+    struct SDL_GPUBuffer* vertBuf = createBuffer(sizeof(verts),SDL_GPU_BUFFERUSAGE_VERTEX,&window);
+    if(vertBuf == NULL){
+        printf("Error create vertex buffer: %s\n",SDL_GetError());
+    }
+    struct SDL_GPUTransferBuffer* vertTransBuf = createTransferBuffer(sizeof(verts),&window);
+    void* vertMem = createTransferMem(vertTransBuf,verts,&window);
+	SDL_UnmapGPUTransferBuffer(window.device, vertTransBuf);
+    SDL_GPUTransferBufferLocation vertTransBufLoc = createTransferBufferLocation(vertTransBuf);
+    SDL_GPUBufferBinding vertBufBind = createBufferBinding(vertBuf);
+
 	const float rotationSpeed = glm_rad(90.0f);
 
 	float rotation = 0.0f;
@@ -33,6 +48,13 @@ int main(){
     glm_rotate(model, rotation, (vec3){0.0f, 1.0f, 0.0f});
 
 	Uint64 lastTime = SDL_GetPerformanceCounter();
+
+    SDL_GPUBufferRegion vertBufRegion = createBufferRegion(sizeof(verts),vertBuf);
+
+    startCopyPass(&window);
+    uploadBuffer(&vertTransBufLoc, &vertBufRegion, &window);
+    endCopyPass(&window);
+
 
     bool running = true;
     SDL_Event event;
@@ -60,6 +82,7 @@ int main(){
         
         newFrame(&window);
 
+        SDL_BindGPUVertexBuffers(window.renderPass, 0, &vertBufBind, 1);
         SDL_PushGPUVertexUniformData(window.commandBuffer, 0, &ubo, sizeof(ubo));
         SDL_DrawGPUPrimitives(window.renderPass, 3, 1, 0, 0);
         

@@ -55,7 +55,7 @@ SDL_GPUShader* load_shader(
     return shader;
 }
 
-struct Window createWindow(){
+struct Window   createWindow(){
     struct SDL_Window* s_window = NULL;
     s_window = SDL_CreateWindow("Goo Goo Ga Ga Bitch",800,600,SDL_WINDOW_VULKAN);
     if(s_window == NULL){
@@ -74,12 +74,28 @@ struct Window createWindow(){
     0,0,0,0);
     SDL_GPUShader* vert = load_shader(s_device,"C:/Users/Reall/Desktop/SDL3 GPU c/bin/shader.spv.vert",SDL_GPU_SHADERSTAGE_VERTEX,
     0,1,0,0);
+
+
     return (struct Window){
             .window = s_window,
             .device = s_device,
             .vertexShader = vert,
-            .fragmentShader = frag
-    };
+            .fragmentShader = frag,
+            .vertexInput = (SDL_GPUVertexInputState){
+                .num_vertex_buffers = 1,
+                .num_vertex_attributes = 1,
+                .vertex_buffer_descriptions = &(SDL_GPUVertexBufferDescription){
+                    .slot = 1,
+                    .pitch = sizeof(vec3),
+                    .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX
+                },
+                .vertex_attributes = &(SDL_GPUVertexAttribute){
+                    .location = 0,
+                    .offset = 0,
+                    .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3
+                }
+            } 
+        };
 }
 
 void newFrame(struct Window *window){
@@ -119,7 +135,8 @@ void newFrame(struct Window *window){
                     },
                     .format = SDL_GetGPUSwapchainTextureFormat(window->device, window->window)
                 }
-            }
+            },
+            .vertex_input_state = window->vertexInput
         }
     );
 
@@ -132,4 +149,66 @@ void endFrame(struct Window *window){
     if(!SDL_SubmitGPUCommandBuffer(window->commandBuffer)){
         printf("Error submit command buffer: %s\n",SDL_GetError());
     }
+}
+
+SDL_GPUBuffer* createBuffer(Uint32 size,SDL_GPUBufferUsageFlags usage ,struct Window* window){
+
+    return SDL_CreateGPUBuffer(window->device,
+        &(SDL_GPUBufferCreateInfo){
+            .usage = usage,
+            .size = size
+        }
+    );
+}
+
+void startCopyPass(struct Window* window){
+    window->copyCommandBuffer = SDL_AcquireGPUCommandBuffer(window->device);
+    window->copyPass = SDL_BeginGPUCopyPass(window->copyCommandBuffer);
+    if(window->copyPass == NULL){
+        printf("Error begain copy pass: %s\n",SDL_GetError());
+    }
+}
+
+void endCopyPass(struct Window* window){
+    SDL_EndGPUCopyPass(window->copyPass);
+}
+
+SDL_GPUTransferBuffer* createTransferBuffer(Uint32 size,struct Window* window){
+    return SDL_CreateGPUTransferBuffer(window->device,
+        &(SDL_GPUTransferBufferCreateInfo){
+            .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+            .size = size
+        }
+    );
+}
+
+void* createTransferMem(SDL_GPUTransferBuffer* transferBuffer,void* data,struct Window* window){
+    void* vertexMem = SDL_MapGPUTransferBuffer(window->device, transferBuffer,false);
+	memcpy(vertexMem, data, sizeof(data));
+    return vertexMem;
+}
+
+SDL_GPUTransferBufferLocation createTransferBufferLocation(SDL_GPUTransferBuffer* transferBuffer){
+    return (SDL_GPUTransferBufferLocation){
+        .transfer_buffer = transferBuffer
+    };
+}
+
+SDL_GPUBufferRegion createBufferRegion(Uint32 size,SDL_GPUBuffer* buffer){
+    return (SDL_GPUBufferRegion){
+        .buffer = buffer,
+        .size = size
+    };
+}
+
+void uploadBuffer(SDL_GPUTransferBufferLocation* transferBufferLocation, SDL_GPUBufferRegion* bufferRegion, struct Window* window){
+    SDL_UploadToGPUBuffer(window->copyPass, transferBufferLocation, bufferRegion, false);
+}
+
+SDL_GPUBufferBinding createBufferBinding(SDL_GPUBuffer* buffer){
+
+    return (SDL_GPUBufferBinding){
+        .buffer = buffer,
+        .offset = 0
+    };
 }
