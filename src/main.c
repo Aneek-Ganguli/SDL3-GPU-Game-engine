@@ -14,26 +14,38 @@ int main(){
         printf("Error initializing SDL: %s\n", SDL_GetError());
         return -1;
     }
+
+    SDL_SetLogPriorities(SDL_LOG_PRIORITY_VERBOSE);
+
     struct Window window = createWindow();
 
     int width, height;
 	SDL_GetWindowSize(window.window, &width, &height);
 
-    vec3 verts[3] = {
-        {-1.0f, -1.0f, 0.0f },
-		{ 1.0f, -1.0f, 0.0f },
-		{ 0.0f,  1.0f, 0.0f }    
-    };
+
+	vec3 vertices[] = {
+		{-1.0f, -1.0f, 0.0f, },
+		{ 1.0f, -1.0f, 0.0f, },
+		{0.0f, 1.0f, 0.0f }
+	};
     
-    struct SDL_GPUBuffer* vertBuf = createBuffer(sizeof(verts),SDL_GPU_BUFFERUSAGE_VERTEX,&window);
-    if(vertBuf == NULL){
-        printf("Error create vertex buffer: %s\n",SDL_GetError());
+    SDL_GPUBuffer* vertexBuffer = createBuffer(sizeof(vertices),SDL_GPU_BUFFERUSAGE_VERTEX,&window);
+    if(!vertexBuffer){
+        printf("Error creating vertex buffer: %s\n",SDL_GetError());
     }
-    struct SDL_GPUTransferBuffer* vertTransBuf = createTransferBuffer(sizeof(verts),&window);
-    void* vertMem = createTransferMem(vertTransBuf,verts,&window);
-	SDL_UnmapGPUTransferBuffer(window.device, vertTransBuf);
-    SDL_GPUTransferBufferLocation vertTransBufLoc = createTransferBufferLocation(vertTransBuf);
-    SDL_GPUBufferBinding vertBufBind = createBufferBinding(vertBuf);
+
+
+    SDL_GPUTransferBuffer* vertexTransferBuffer = createTransferBuffer(sizeof(vertices),&window);
+    if(!vertexTransferBuffer){
+        printf("Error creating vertex transfer buffer: %s\n",SDL_GetError());
+    }
+
+    void* vertexMemory = createTransferMem(vertexTransferBuffer,vertices,sizeof(vertices),&window);
+    if(!vertexMemory){
+        printf("Error creating transfer memory: %s\n",SDL_GetError());
+    }
+	SDL_UnmapGPUTransferBuffer(window.device, vertexTransferBuffer);
+
 
 	const float rotationSpeed = glm_rad(90.0f);
 
@@ -50,12 +62,18 @@ int main(){
 
 	Uint64 lastTime = SDL_GetPerformanceCounter();
 
-    SDL_GPUBufferRegion vertBufRegion = createBufferRegion(sizeof(verts),vertBuf);
 
     startCopyPass(&window);
-    uploadBuffer(&vertTransBufLoc, &vertBufRegion, &window);
+
+    SDL_GPUTransferBufferLocation vertexTransferBufferLocation = createTransferBufferLocation(vertexTransferBuffer);
+    
+    SDL_GPUBufferRegion vertexBufferRegion = createBufferRegion(sizeof(vertices),vertexBuffer);
+
+    uploadBuffer(&vertexTransferBufferLocation,&vertexBufferRegion,&window);
+
     endCopyPass(&window);
 
+    SDL_GPUBufferBinding vertexBufferBinding = createBufferBinding(vertexBuffer);
 
     bool running = true;
     SDL_Event event;
@@ -83,7 +101,7 @@ int main(){
         
         newFrame(&window);
 
-        SDL_BindGPUVertexBuffers(window.renderPass, 0, &vertBufBind, 1);
+        SDL_BindGPUVertexBuffers(window.renderPass,0,&vertexBufferBinding,1);
         SDL_PushGPUVertexUniformData(window.commandBuffer, 0, &ubo, sizeof(ubo));
         SDL_DrawGPUPrimitives(window.renderPass, 3, 1, 0, 0);
         

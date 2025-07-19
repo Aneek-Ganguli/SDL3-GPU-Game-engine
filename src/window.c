@@ -86,7 +86,6 @@ struct Window   createWindow(){
                 },
                 .vertex_attributes = &(SDL_GPUVertexAttribute){
                     .location = 0,
-                    .offset = 0,
                     .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
                     .buffer_slot = 0
                 }
@@ -168,6 +167,9 @@ SDL_GPUBuffer* createBuffer(Uint32 size,SDL_GPUBufferUsageFlags usage ,struct Wi
 
 void startCopyPass(struct Window* window){
     window->copyCommandBuffer = SDL_AcquireGPUCommandBuffer(window->device);
+    if(window->copyCommandBuffer == NULL){
+        printf("Error creating copy command buffer: %s\n",SDL_GetError());
+    }
     window->copyPass = SDL_BeginGPUCopyPass(window->copyCommandBuffer);
     if(window->copyPass == NULL){
         printf("Error begain copy pass: %s\n",SDL_GetError());
@@ -187,9 +189,9 @@ SDL_GPUTransferBuffer* createTransferBuffer(Uint32 size,struct Window* window){
     );
 }
 
-void* createTransferMem(SDL_GPUTransferBuffer* transferBuffer,void* data,struct Window* window){
+void* createTransferMem(SDL_GPUTransferBuffer* transferBuffer,void* data,Uint32 size,struct Window* window){
     void* vertexMem = SDL_MapGPUTransferBuffer(window->device, transferBuffer,false);
-	memcpy(vertexMem, data, sizeof(data));
+	memcpy(vertexMem, data, size);
     return vertexMem;
 }
 
