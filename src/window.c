@@ -178,6 +178,9 @@ void startCopyPass(struct Window* window){
 
 void endCopyPass(struct Window* window){
     SDL_EndGPUCopyPass(window->copyPass);
+    if(!SDL_SubmitGPUCommandBuffer(window->copyCommandBuffer)){
+        printf("Error submit copy pass: %s\n",SDL_GetError());
+    }
 }
 
 SDL_GPUTransferBuffer* createTransferBuffer(Uint32 size,struct Window* window){
