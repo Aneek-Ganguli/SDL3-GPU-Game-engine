@@ -3,6 +3,7 @@
 #include <cglm/cglm.h>
 
 #include "Window.h"
+#include "Entity.h"
 
 struct UBO {
 	mat4 mvp;
@@ -29,22 +30,22 @@ int main(){
 		{0.0f, 1.0f, 0.0f }
 	};
     
-    SDL_GPUBuffer* vertexBuffer = createBuffer(sizeof(vertices),SDL_GPU_BUFFERUSAGE_VERTEX,&window);
-    if(!vertexBuffer){
-        printf("Error creating vertex buffer: %s\n",SDL_GetError());
-    }
+    // SDL_GPUBuffer* vertexBuffer = createBuffer(sizeof(vertices),SDL_GPU_BUFFERUSAGE_VERTEX,&window);
+    // if(!vertexBuffer){
+    //     printf("Error creating vertex buffer: %s\n",SDL_GetError());
+    // }
 
 
-    SDL_GPUTransferBuffer* vertexTransferBuffer = createTransferBuffer(sizeof(vertices),&window);
-    if(!vertexTransferBuffer){
-        printf("Error creating vertex transfer buffer: %s\n",SDL_GetError());
-    }
+    // SDL_GPUTransferBuffer* vertexTransferBuffer = createTransferBuffer(sizeof(vertices),&window);
+    // if(!vertexTransferBuffer){
+    //     printf("Error creating vertex transfer buffer: %s\n",SDL_GetError());
+    // }
 
-    void* vertexMemory = createTransferMem(vertexTransferBuffer,vertices,sizeof(vertices),&window);
-    if(!vertexMemory){
-        printf("Error creating transfer memory: %s\n",SDL_GetError());
-    }
-	SDL_UnmapGPUTransferBuffer(window.device, vertexTransferBuffer);
+    // void* vertexMemory = createTransferMem(vertexTransferBuffer,vertices,sizeof(vertices),&window);
+    // if(!vertexMemory){
+    //     printf("Error creating transfer memory: %s\n",SDL_GetError());
+    // }
+	// SDL_UnmapGPUTransferBuffer(window.device, vertexTransferBuffer);
 
 
 	const float rotationSpeed = glm_rad(90.0f);
@@ -65,15 +66,17 @@ int main(){
 
     startCopyPass(&window);
 
-    SDL_GPUTransferBufferLocation vertexTransferBufferLocation = createTransferBufferLocation(vertexTransferBuffer);
+    // SDL_GPUTransferBufferLocation vertexTransferBufferLocation = createTransferBufferLocation(vertexTransferBuffer);
     
-    SDL_GPUBufferRegion vertexBufferRegion = createBufferRegion(sizeof(vertices),vertexBuffer);
+    // SDL_GPUBufferRegion vertexBufferRegion = createBufferRegion(sizeof(vertices),vertexBuffer);
 
-    uploadBuffer(&vertexTransferBufferLocation,&vertexBufferRegion,&window);
+    // uploadBuffer(&vertexTransferBufferLocation,&vertexBufferRegion,&window);
+
+    struct Entity ent = createEntity(vertices,sizeof(vertices)/sizeof(vertices[0]),&window);
 
     endCopyPass(&window);
 
-    SDL_GPUBufferBinding vertexBufferBinding = createBufferBinding(vertexBuffer);
+    // SDL_GPUBufferBinding vertexBufferBinding = createBufferBinding(vertexBuffer);
 
     bool running = true;
     SDL_Event event;
@@ -101,7 +104,7 @@ int main(){
         
         newFrame(&window);
 
-        SDL_BindGPUVertexBuffers(window.renderPass,0,&vertexBufferBinding,1);
+        SDL_BindGPUVertexBuffers(window.renderPass,0,&ent.vertexBufferBinding,1);
         SDL_PushGPUVertexUniformData(window.commandBuffer, 0, &ubo, sizeof(ubo));
         SDL_DrawGPUPrimitives(window.renderPass, 3, 1, 0, 0);
         
