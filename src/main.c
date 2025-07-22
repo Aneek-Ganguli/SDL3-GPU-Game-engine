@@ -78,6 +78,9 @@ int main(){
 
     // SDL_GPUBufferBinding vertexBufferBinding = createBufferBinding(vertexBuffer);
 
+    mat4 mvp;
+    struct UBO ubo = {0};
+
     bool running = true;
     SDL_Event event;
     while (running){
@@ -90,17 +93,20 @@ int main(){
             if(event.type == SDL_EVENT_QUIT){
                 running = false;
             }
+            if(event.type == SDL_EVENT_KEY_DOWN){
+                glm_mat4_mul(Projection, model, mvp);
+            
+                glm_mat4_copy(mvp, ubo.mvp);
+
+                rotation += rotationSpeed * deltaTime;
+                glm_mat4_identity(model);
+                glm_translate(model, (vec3){0.0f, 0.0f, -10.0f});
+                glm_rotate(model, rotation, (vec3){0.0f, 1.0f, 0.0f});
+            }
         }
 
-        mat4 mvp;
-        glm_mat4_mul(Projection, model, mvp);
-        struct UBO ubo = {0};
-        glm_mat4_copy(mvp, ubo.mvp);
+        
 
-        rotation += rotationSpeed * deltaTime;
-        glm_mat4_identity(model);
-        glm_translate(model, (vec3){0.0f, 0.0f, -10.0f});
-        glm_rotate(model, rotation, (vec3){0.0f, 1.0f, 0.0f});
         
         newFrame(&window);
 
