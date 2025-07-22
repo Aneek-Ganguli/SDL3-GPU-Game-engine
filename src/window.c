@@ -2,7 +2,7 @@
 #include <SDL3/SDL.h>
 #include <cglm/cglm.h>
 #include "Window.h"
-
+#include "Math.h"
 
 SDL_GPUShader* load_shader(
     SDL_GPUDevice* device,
@@ -70,9 +70,9 @@ struct Window   createWindow(){
 
     SDL_ClaimWindowForGPUDevice(s_device,s_window);
 
-    SDL_GPUShader* frag = load_shader(s_device,"C:/Users/Reall/Desktop/SDL3 GPU c/bin/shader.spv.frag",SDL_GPU_SHADERSTAGE_FRAGMENT,
+    SDL_GPUShader* frag = load_shader(s_device,"../bin/shader.spv.frag",SDL_GPU_SHADERSTAGE_FRAGMENT,
     0,0,0,0);
-    SDL_GPUShader* vert = load_shader(s_device,"C:/Users/Reall/Desktop/SDL3 GPU c/bin/shader.spv.vert",SDL_GPU_SHADERSTAGE_VERTEX,
+    SDL_GPUShader* vert = load_shader(s_device,"../bin/shader.spv.vert",SDL_GPU_SHADERSTAGE_VERTEX,
     0,1,0,0);
 
     SDL_GPUVertexInputState vertexInput = (SDL_GPUVertexInputState){
