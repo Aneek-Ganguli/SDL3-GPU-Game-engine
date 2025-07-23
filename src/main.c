@@ -28,11 +28,11 @@ int main(){
 		{0.0f, 1.0f, 0.0f }
 	};
 
-    struct VertexData vertexData[3] = {
-        {-1.0f, -1.0f, 0.0f, {1.0, 1.0, 1.0, 1.0}},
-		{ 1.0f, -1.0f, 0.0f, {1.0, 1.0, 1.0, 1.0}},
-		{ 0.0f,  1.0f, 0.0f, {1.0, 1.0, 1.0, 1.0}}
-    };
+    struct VertexData vertexData[] = {
+		{-1.0f, -1.0f, 0.0f,{1.0f,0.0f,0.0f,1.0f} },
+		{ 1.0f, -1.0f, 0.0f,{0.0f,1.0f,0.0f,1.0f} },
+		{ 0.0f,  1.0f, 0.0f,{0.0f,0.0f,1.0f,1.0f} }
+	};
 
 	const float rotationSpeed = glm_rad(90.0f);
 
@@ -45,14 +45,14 @@ int main(){
     mat4 model;
     glm_mat4_identity(model);
     glm_translate(model, (vec3){0.0f, 0.0f, -10.0f});
-    glm_rotate(model, rotation, (vec3){0.0f, 1.0f, 0.0f});
+    //glm_rotate(model, rotation, (vec3){0.0f, 1.0f, 0.0f});
 
 	Uint64 lastTime = SDL_GetPerformanceCounter();
 
 
     startCopyPass(&window);
 
-    struct Entity ent = createEntity(vertices,sizeof(vertices)/sizeof(vertices[0]),&window);
+    struct Entity ent = createEntity(vertexData,3,&window);
     
     endCopyPass(&window);
 

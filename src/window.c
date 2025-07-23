@@ -77,17 +77,24 @@ struct Window   createWindow(){
 
     SDL_GPUVertexInputState vertexInput = (SDL_GPUVertexInputState){
                 .num_vertex_buffers = 1,
-                .num_vertex_attributes = 1,
+                .num_vertex_attributes = 2,
                 .vertex_buffer_descriptions = &(SDL_GPUVertexBufferDescription){
                     .slot = 0,
                     .pitch = sizeof(struct VertexData),
                     .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX,
                     // .instance_step_rate = 0
                 },
-                .vertex_attributes = &(SDL_GPUVertexAttribute){
-                    .location = 0,
-                    .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-                    .buffer_slot = 0
+                .vertex_attributes = (SDL_GPUVertexAttribute[]){
+                    [0] = {
+                        .location = 0,
+                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+                        .offset = offsetof(struct VertexData,position),
+                    },
+                    [1] = {
+                        .location = 1,
+                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+                        .offset = offsetof(struct VertexData,color),
+                    }
                 }
     }; 
 

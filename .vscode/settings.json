@@ -2,6 +2,7 @@
     "cmake.sourceDirectory": "C:/Users/Reall/Desktop/SDL3 GPU c",
     "files.associations": {
         "window.h": "c",
-        "cglm.h": "c"
+        "cglm.h": "c",
+        "stdio.h": "c"
     }
 }

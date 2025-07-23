@@ -9,8 +9,8 @@ struct Entity{
     void* vertexMemory;
     SDL_GPUTransferBufferLocation vertexTransferBufferLocation;
     SDL_GPUBufferRegion vertexBufferRegion;
-    vec3* verticies;
+    struct VertexData* vertexData;
     SDL_GPUBufferBinding vertexBufferBinding;
 };
 
-struct Entity createEntity(vec3 verticies[], size_t verticies_count, struct Window* window);
+struct Entity createEntity(struct VertexData* vertexData, size_t verticies_count, struct Window* window);
