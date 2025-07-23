@@ -2,7 +2,6 @@
 #include <SDL3/SDL.h>
 #include "Window.h"
 #include "Entity.h"
-#include "Math.h"
 
 struct Entity createEntity(vec3 verticies[], size_t verticies_count, struct Window* window){
     SDL_GPUBuffer* vertexBuffer = createBuffer(sizeof(vec3) * verticies_count, SDL_GPU_BUFFERUSAGE_VERTEX, window);

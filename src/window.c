@@ -2,7 +2,7 @@
 #include <SDL3/SDL.h>
 #include <cglm/cglm.h>
 #include "Window.h"
-#include "Math.h"
+#include "VertexData.h"
 
 SDL_GPUShader* load_shader(
     SDL_GPUDevice* device,
@@ -80,7 +80,7 @@ struct Window   createWindow(){
                 .num_vertex_attributes = 1,
                 .vertex_buffer_descriptions = &(SDL_GPUVertexBufferDescription){
                     .slot = 0,
-                    .pitch = sizeof(vec3),
+                    .pitch = sizeof(struct VertexData),
                     .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX,
                     // .instance_step_rate = 0
                 },

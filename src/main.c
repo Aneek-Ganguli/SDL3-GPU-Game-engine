@@ -4,11 +4,8 @@
 
 #include "Window.h"
 #include "Entity.h"
-#include "Math.h"
+#include "VertexData.h"
 
-struct UBO {
-	mat4 mvp;
-};
 
 int main(){
     
@@ -31,6 +28,11 @@ int main(){
 		{0.0f, 1.0f, 0.0f }
 	};
 
+    struct VertexData vertexData[3] = {
+        {-1.0f, -1.0f, 0.0f, {1.0, 1.0, 1.0, 1.0}},
+		{ 1.0f, -1.0f, 0.0f, {1.0, 1.0, 1.0, 1.0}},
+		{ 0.0f,  1.0f, 0.0f, {1.0, 1.0, 1.0, 1.0}}
+    };
 
 	const float rotationSpeed = glm_rad(90.0f);
 

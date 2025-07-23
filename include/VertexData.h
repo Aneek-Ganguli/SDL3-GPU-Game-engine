@@ -3,6 +3,10 @@
 #include <cglm/cglm.h>
 
 struct VertexData {
-	vec3 position;
-	SDL_FColor color;
+    vec3 position;
+    SDL_FColor color;
+};
+
+struct UBO {
+	mat4 mvp;
 };

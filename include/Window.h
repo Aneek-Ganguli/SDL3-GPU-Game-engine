@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <SDL3/SDL.h>
 #include <cglm/cglm.h>
-#include "Math.h"
 
 struct Window{
     SDL_Window* window;
@@ -16,6 +15,7 @@ struct Window{
     SDL_GPUShader* fragmentShader;
     SDL_GPUCopyPass* copyPass;
 };
+
 
 
 struct Window createWindow();

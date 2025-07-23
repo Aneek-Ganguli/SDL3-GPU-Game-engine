@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <SDL3/SDL.h>
 #include "Window.h"
-#include "Math.h"
 
 struct Entity{
     SDL_GPUBuffer* vertexBuffer;
