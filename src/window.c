@@ -230,3 +230,4 @@ SDL_GPUBufferBinding createBufferBinding(SDL_GPUBuffer* buffer){
         .offset = 0
     };
 }
+

@@ -10,3 +10,9 @@ struct VertexData {
 struct UBO {
 	mat4 mvp;
 };
+
+struct Vec2{
+    float x,y;
+};
+
+struct Vec2 normalize(float x, float y);

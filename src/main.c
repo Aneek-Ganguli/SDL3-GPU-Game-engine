@@ -62,6 +62,7 @@ int main(){
 
 	Uint64 lastTime = SDL_GetPerformanceCounter();
 
+    
 
     startCopyPass(&window);
 

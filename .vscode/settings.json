@@ -5,6 +5,7 @@
         "cglm.h": "c",
         "stdio.h": "c",
         "sdl.h": "c",
-        "vertexdata.h": "c"
+        "vertexdata.h": "c",
+        "vec2.h": "c"
     }
 }

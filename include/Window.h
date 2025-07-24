@@ -3,6 +3,8 @@
 #include <SDL3/SDL.h>
 #include <cglm/cglm.h>
 
+#include "VertexData.h"
+
 struct Window{
     SDL_Window* window;
     SDL_GPUDevice* device;
@@ -15,8 +17,6 @@ struct Window{
     SDL_GPUShader* fragmentShader;
     SDL_GPUCopyPass* copyPass;
 };
-
-
 
 struct Window createWindow();
 void newFrame(struct Window *window);
