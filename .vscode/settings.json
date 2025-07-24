@@ -3,6 +3,8 @@
     "files.associations": {
         "window.h": "c",
         "cglm.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "sdl.h": "c",
+        "vertexdata.h": "c"
     }
 }

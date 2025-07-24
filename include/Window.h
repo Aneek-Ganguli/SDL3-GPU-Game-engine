@@ -29,7 +29,7 @@ void startCopyPass(struct Window* window);
 void endCopyPass(struct Window* window);
 SDL_GPUTransferBuffer* createTransferBuffer(Uint32 size,struct Window* window);
 void* createTransferMem(SDL_GPUTransferBuffer* transferBuffer, void* data,Uint32 size, struct Window* window);
-SDL_GPUTransferBufferLocation createTransferBufferLocation(SDL_GPUTransferBuffer* transferBuffer);
+SDL_GPUTransferBufferLocation createTransferBufferLocation(SDL_GPUTransferBuffer* transferBuffer,Uint32 offset);
 SDL_GPUBufferRegion createBufferRegion(Uint32 size,SDL_GPUBuffer* buffer);
 void uploadBuffer(SDL_GPUTransferBufferLocation* transferBufferLocation, SDL_GPUBufferRegion* bufferRegion, struct Window* window);
 SDL_GPUBufferBinding createBufferBinding(SDL_GPUBuffer* buffer);

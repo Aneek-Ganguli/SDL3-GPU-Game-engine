@@ -22,17 +22,30 @@ int main(){
 	SDL_GetWindowSize(window.window, &width, &height);
 
 
-	vec3 vertices[] = {
-		{-1.0f, -1.0f, 0.0f, },
-		{ 1.0f, -1.0f, 0.0f, },
-		{0.0f, 1.0f, 0.0f }
-	};
+	// vec3 vertices[] = {
+	// 	{-1.0f, -1.0f, 0.0f, },
+	// 	{ 1.0f, -1.0f, 0.0f, },
+	// 	{0.0f, 1.0f, 0.0f }
+	// };
 
-    struct VertexData vertexData[] = {
-		{-1.0f, -1.0f, 0.0f,{1.0f,0.0f,0.0f,1.0f} },
-		{ 1.0f, -1.0f, 0.0f,{0.0f,1.0f,0.0f,1.0f} },
-		{ 0.0f,  1.0f, 0.0f,{0.0f,0.0f,1.0f,1.0f} }
-	};
+    // struct VertexData vertexData[] = {
+	// 	{-1.0f, -1.0f, 0.0f,{1.0f,0.0f,0.0f,1.0f} },
+	// 	{ 1.0f, -1.0f, 0.0f,{0.0f,1.0f,0.0f,1.0f} },
+	// 	{ 0.0f,  1.0f, 0.0f,{0.0f,0.0f,1.0f,1.0f} }
+	// };
+
+
+    struct VertexData vertices[] = {
+        {-0.5f,  0.5f, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f}}, // Triangle 1
+        { 0.5f,  0.5f, 0.0f, {0.0f, 1.0f, 0.0f, 1.0f}},
+        {-0.5f, -0.5f, 0.0f, {0.0f, 0.0f, 1.0f, 1.0f}},
+        { 0.5f, -0.5f, 0.0f, {1.0f, 1.0f, 0.0f, 1.0f}}, // Triangle 2
+    };
+
+    Uint32 indices[] = {
+        0, 1, 2,
+        2, 1, 3
+    };
 
 	const float rotationSpeed = glm_rad(90.0f);
 
@@ -52,7 +65,10 @@ int main(){
 
     startCopyPass(&window);
 
-    struct Entity ent = createEntity(vertexData,3,&window);
+    struct Entity ent;
+    createEntity(vertices,sizeof(vertices)/sizeof(vertices[0]),
+                 indices,sizeof(indices)/sizeof(indices[0]),
+                 &window,&ent);
     
     endCopyPass(&window);
 
@@ -85,9 +101,10 @@ int main(){
         }
         newFrame(&window);
 
-        SDL_BindGPUVertexBuffers(window.renderPass,0,&ent.vertexBufferBinding,1);
+        SDL_BindGPUVertexBuffers(window.renderPass, 0, &ent.vertexBufferBinding, 1);
+        SDL_BindGPUIndexBuffer(window.renderPass, &ent.indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
         SDL_PushGPUVertexUniformData(window.commandBuffer, 0, &ubo, sizeof(ubo));
-        SDL_DrawGPUPrimitives(window.renderPass, 3, 1, 0, 0);
+        SDL_DrawGPUIndexedPrimitives(window.renderPass, 6, 1, 0, 0, 0);
         
         endFrame(&window); 
     }

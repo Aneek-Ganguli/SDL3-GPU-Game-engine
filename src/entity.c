@@ -4,39 +4,64 @@
 #include "Entity.h"
 #include "VertexData.h"
 
-struct Entity createEntity(struct VertexData* vertexData, size_t verticies_count, struct Window* window){
-    SDL_GPUBuffer* vertexBuffer = createBuffer(sizeof(struct VertexData) * verticies_count, SDL_GPU_BUFFERUSAGE_VERTEX, window);
-    if(!vertexBuffer){
+void createEntity(struct VertexData* vertexData, size_t verticies_count,Uint32* indicies,
+    size_t indicies_count,  struct Window* window,struct Entity* e){
+    
+    int vertexSize = sizeof(struct VertexData) * verticies_count;
+    int indexSize = sizeof(Uint32) * indicies_count;
+
+    e->vertexBuffer = createBuffer(vertexSize,
+                                   SDL_GPU_BUFFERUSAGE_VERTEX, window);
+        
+    if(!e->vertexBuffer){
         printf("Error creating vertex buffer: %s\n",SDL_GetError());
     }
 
+    
 
-    SDL_GPUTransferBuffer* vertexTransferBuffer = createTransferBuffer(sizeof(struct VertexData) * verticies_count, window);
-    if(!vertexTransferBuffer){
+
+    e->indexBuffer = createBuffer(indexSize,SDL_GPU_BUFFERUSAGE_INDEX,window);
+
+    e->vertexData = vertexData;
+    e->indicies = indicies;
+
+    e->transferBuffer = createTransferBuffer(
+        vertexSize + indexSize,
+        window);
+    
+    if(!e->transferBuffer){
         printf("Error creating vertex transfer buffer: %s\n",SDL_GetError());
     }
 
-    void* vertexMemory = createTransferMem(vertexTransferBuffer, vertexData, sizeof(struct VertexData) * verticies_count, window);
-    if(!vertexMemory){
+    e->transferMem = SDL_MapGPUTransferBuffer(window->device, e->transferBuffer, false);
+
+    memcpy(e->transferMem, vertexData, vertexSize);
+
+    memcpy((char*)e->transferMem + vertexSize,
+           indicies, indexSize);
+
+    // e->transferMem = createTransferMem(e->transferBuffer, vertexData, 
+    //                                    sizeof(struct VertexData) * verticies_count,
+    //                                    window);
+  
+    if(!e->transferMem){
         printf("Error creating transfer memory: %s\n",SDL_GetError());
     }
-    SDL_UnmapGPUTransferBuffer(window->device, vertexTransferBuffer);
+    // SDL_UnmapGPUTransferBuffer(window->device, e->transferBuffer);
 
-    SDL_GPUTransferBufferLocation vertexTransferBufferLocation = createTransferBufferLocation(vertexTransferBuffer);
-    
-    SDL_GPUBufferRegion vertexBufferRegion = createBufferRegion(sizeof(struct VertexData) * verticies_count, vertexBuffer);
+    e->vertexTransferBufferLocation = createTransferBufferLocation(e->transferBuffer,0);
+    e->vertexBufferRegion = createBufferRegion(vertexSize,
+                                               e->vertexBuffer);
 
-    uploadBuffer(&vertexTransferBufferLocation, &vertexBufferRegion, window);
+    //indicies
+    e->indexTransferBufferLocation = createTransferBufferLocation(e->transferBuffer,
+        vertexSize);
 
-    SDL_GPUBufferBinding vertexBufferBinding = createBufferBinding(vertexBuffer);
+    e->indexBufferRegion = createBufferRegion(indexSize,e->indexBuffer);
 
-    return (struct Entity){
-        .vertexData = vertexData,
-        .vertexBuffer = vertexBuffer,
-        .vertexTransferBuffer = vertexTransferBuffer,
-        .vertexMemory = vertexMemory,
-        .vertexTransferBufferLocation = vertexTransferBufferLocation,
-        .vertexBufferRegion = vertexBufferRegion,
-        .vertexBufferBinding = vertexBufferBinding
-    };
+    uploadBuffer(&e->vertexTransferBufferLocation, &e->vertexBufferRegion, window);
+    uploadBuffer(&e->indexTransferBufferLocation, &e->indexBufferRegion, window);
+
+    e->vertexBufferBinding = createBufferBinding(e->vertexBuffer);
+    e->indexBufferBinding = createBufferBinding(e->indexBuffer);
 }

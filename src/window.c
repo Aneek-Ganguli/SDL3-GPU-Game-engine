@@ -57,7 +57,7 @@ SDL_GPUShader* load_shader(
 
 struct Window   createWindow(){
     struct SDL_Window* s_window = NULL;
-    s_window = SDL_CreateWindow("Goo Goo Ga Ga Bitch",800,600,SDL_WINDOW_VULKAN);
+    s_window = SDL_CreateWindow("It works",800,600,SDL_WINDOW_VULKAN);
     if(s_window == NULL){
         printf("Error creating window: %s\n",SDL_GetError());
     }
@@ -205,9 +205,10 @@ void* createTransferMem(SDL_GPUTransferBuffer* transferBuffer,void* data,Uint32 
     return vertexMem;
 }
 
-SDL_GPUTransferBufferLocation createTransferBufferLocation(SDL_GPUTransferBuffer* transferBuffer){
+SDL_GPUTransferBufferLocation createTransferBufferLocation(SDL_GPUTransferBuffer* transferBuffer,Uint32 offset){
     return (SDL_GPUTransferBufferLocation){
-        .transfer_buffer = transferBuffer
+        .transfer_buffer = transferBuffer,
+        .offset = offset
     };
 }
 
