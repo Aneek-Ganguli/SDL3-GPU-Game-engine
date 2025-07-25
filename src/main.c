@@ -101,12 +101,7 @@ int main(){
             }
         }
         newFrame(&window);
-
-        SDL_BindGPUVertexBuffers(window.renderPass, 0, &ent.vertexBufferBinding, 1);
-        SDL_BindGPUIndexBuffer(window.renderPass, &ent.indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
-        SDL_PushGPUVertexUniformData(window.commandBuffer, 0, &ubo, sizeof(ubo));
-        SDL_DrawGPUIndexedPrimitives(window.renderPass, 6, 1, 0, 0, 0);
-        
+        drawEntity(&ubo,sizeof(ubo),&window,&ent);
         endFrame(&window); 
     }
     
