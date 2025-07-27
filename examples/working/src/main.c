@@ -4,12 +4,6 @@
 #include <stb/stb_image.h>
 #include <SDL3_image/SDL_image.h>
 
-#ifdef _WIN32         // For Windows-specific headers
-#include <direct.h>   // For _getcwd on Windows
-#define getcwd _getcwd
-#endif
-
-
 #include "Window.h"
 #include "Entity.h"
 #include "VertexData.h"
@@ -24,20 +18,10 @@ int main(){
 
     SDL_SetLogPriorities(SDL_LOG_PRIORITY_VERBOSE);
 
-    char current_path[1000];
-    if (getcwd(current_path, sizeof(current_path)) != NULL) {
-        printf("Current directory: %s\n", current_path);
-    } else {
-        perror("getcwd() error"); // Print an error message if getcwd fails
-        return 1; // Indicate an error
-    }
 
     struct Window window = createWindow();
     SDL_GPUShader* frag = load_shader(window.device,"../bin/shader.spv.frag",SDL_GPU_SHADERSTAGE_FRAGMENT,
     0,0,0,0);
-    if(frag ==NULL){
-        return -1;
-    }
 
     SDL_GPUShader* vert = load_shader(window.device,"../bin/shader.spv.vert",SDL_GPU_SHADERSTAGE_VERTEX,
     0,1,0,0);
@@ -46,20 +30,6 @@ int main(){
 
     int width, height;
 	SDL_GetWindowSize(window.window, &width, &height);
-
-
-	// vec3 vertices[] = {
-	// 	{-1.0f, -1.0f, 0.0f, },
-	// 	{ 1.0f, -1.0f, 0.0f, },
-	// 	{0.0f, 1.0f, 0.0f }
-	// };
-
-    // struct VertexData vertexData[] = {
-	// 	{-1.0f, -1.0f, 0.0f,{1.0f,0.0f,0.0f,1.0f} },
-	// 	{ 1.0f, -1.0f, 0.0f,{0.0f,1.0f,0.0f,1.0f} },
-	// 	{ 0.0f,  1.0f, 0.0f,{0.0f,0.0f,1.0f,1.0f} }
-	// };
-
     
 
     struct VertexData vertices[] = {
@@ -115,16 +85,6 @@ int main(){
         while(SDL_PollEvent(&event)){
             if(event.type == SDL_EVENT_QUIT){
                 running = false;
-            }
-            if(event.type == SDL_EVENT_KEY_DOWN){
-                glm_mat4_mul(Projection, model, mvp);
-            
-                glm_mat4_copy(mvp, ubo.mvp);
-
-                rotation += rotationSpeed * deltaTime;
-                glm_mat4_identity(model);
-                glm_translate(model, (vec3){0.0f, 0.0f, -10.0f});
-                glm_rotate(model, rotation, (vec3){0.0f, 1.0f, 0.0f});
             }
         }
         newFrame(&window);

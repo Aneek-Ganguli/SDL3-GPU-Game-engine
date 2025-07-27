@@ -1,3 +1,4 @@
 bin/*
 .vscode/*
 examples/working/bin/*
+examples/window/bin/*

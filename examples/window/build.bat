@@ -1,0 +1,1 @@
+gcc -g ../../src/*.c -g src/*.c -o bin/window.exe "-IC:/DEV/SDL/SDL3/SDL3 VC/include" "-IC:/DEV/SDL/SDL_image/SDL3_image VC/include" "-I../../include" "-LC:/DEV/SDL/SDL3/SDL3 VC/lib/x64" "-LC:/DEV/SDL/SDL_image/SDL3_image VC/lib/x64" -lSDL3 -lSDL3_image -std=c17 -ggdb
