@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <SDL3/SDL.h>
 #include <cglm/cglm.h>
-#include <stb/stb_image.h>
 #include <SDL3_image/SDL_image.h>
 
 #include "Window.h"
