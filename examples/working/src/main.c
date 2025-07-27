@@ -16,6 +16,7 @@ int main(){
         return -1;
     }
 
+    
     SDL_SetLogPriorities(SDL_LOG_PRIORITY_VERBOSE);
 
 
@@ -31,6 +32,15 @@ int main(){
     int width, height;
 	SDL_GetWindowSize(window.window, &width, &height);
     
+
+    SDL_Surface *surface = IMG_Load("my_image.png");
+    if(surface == NULL){
+        printf("Error: %s\n",SDL_GetError());
+    }
+
+    // Now create a GPU texture and upload
+    
+
 
     struct VertexData vertices[] = {
         {{-0.5f,  0.5f, 0.0f },{0,1} , {1.0f, 0.0f, 0.0f, 1.0f}}, // Triangle 1
@@ -59,7 +69,7 @@ int main(){
 
 	Uint64 lastTime = SDL_GetPerformanceCounter();
 
-    
+        
 
     startCopyPass(&window);
 
