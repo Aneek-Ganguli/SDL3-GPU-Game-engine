@@ -5,7 +5,7 @@
 #include "Window.h"
 #include "VertexData.h"
 
-struct Entity{
+typedef struct Entity{
     SDL_GPUBuffer* vertexBuffer;
     SDL_GPUTransferBuffer* transferBuffer;
     void* transferMem;
@@ -18,10 +18,10 @@ struct Entity{
     SDL_GPUTransferBufferLocation indexTransferBufferLocation;
     SDL_GPUBufferRegion indexBufferRegion;
     SDL_GPUBufferBinding indexBufferBinding;
-    int vertexSize,indexSize;
-};
+    int verticiesCount,indiciesCount;
+} Entity;
 
 void createEntity(struct VertexData* vertexData, size_t verticies_count,Uint32* indicies,
     size_t indicies_count,  struct Window* window,struct Entity* e);
 
-void drawEntity(struct UBO* ubo,size_t size,struct Window* window,struct Entity* e);
+void drawEntity(struct UBO* ubo,size_t size,struct Window* window,Entity* e);

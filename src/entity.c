@@ -10,8 +10,8 @@ void createEntity(struct VertexData* vertexData, size_t verticies_count,Uint32* 
     int vertexSize = sizeof(struct VertexData) * verticies_count;
     int indexSize = sizeof(Uint32) * indicies_count;
 
-    e->vertexSize = vertexSize;
-    e->indexSize = indexSize;
+    e->verticiesCount = verticies_count;
+    e->indiciesCount = indicies_count;
 
     e->vertexBuffer = createBuffer(vertexSize,
                                    SDL_GPU_BUFFERUSAGE_VERTEX, window);
@@ -72,7 +72,6 @@ void createEntity(struct VertexData* vertexData, size_t verticies_count,Uint32* 
 void drawEntity(struct UBO* ubo,size_t size,struct Window* window,struct Entity* e){
     SDL_BindGPUVertexBuffers(window->renderPass, 0, &e->vertexBufferBinding, 1);
     SDL_BindGPUIndexBuffer(window->renderPass, &e->indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
-        SDL_PushGPUVertexUniformData(window->commandBuffer, 0, &ubo, sizeof(ubo));
-        SDL_DrawGPUIndexedPrimitives(window->renderPass, 6, 1, 0, 0, 0);
-        
+    SDL_PushGPUVertexUniformData(window->commandBuffer, 0, &ubo, sizeof(ubo));
+    SDL_DrawGPUIndexedPrimitives(window->renderPass, e->indiciesCount, 1, 0, 0, 0);
 }

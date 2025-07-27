@@ -18,7 +18,8 @@
             "intelliSenseMode": "windows-msvc-x64",
             "compilerArgs": [
                 "-IC:\\DEV\\SDL\\SDL3\\SDL3 VC\\include",
-                "-I${workspaceFolder}/include"
+                "-I${workspaceFolder}/include",
+                "-IC:\\DEV\\SDL\\SDL_image\\SDL3_image VC\\include"
             ]
         }
     ],

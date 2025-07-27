@@ -55,7 +55,7 @@ SDL_GPUShader* load_shader(
     return shader;
 }
 
-struct Window   createWindow(){
+struct Window  createWindow(){
     struct SDL_Window* s_window = NULL;
     s_window = SDL_CreateWindow("It works",800,600,SDL_WINDOW_VULKAN);
     if(s_window == NULL){
@@ -70,58 +70,15 @@ struct Window   createWindow(){
 
     SDL_ClaimWindowForGPUDevice(s_device,s_window);
 
-    SDL_GPUShader* frag = load_shader(s_device,"../bin/shader.spv.frag",SDL_GPU_SHADERSTAGE_FRAGMENT,
-    0,0,0,0);
-    SDL_GPUShader* vert = load_shader(s_device,"../bin/shader.spv.vert",SDL_GPU_SHADERSTAGE_VERTEX,
-    0,1,0,0);
 
-    SDL_GPUVertexInputState vertexInput = (SDL_GPUVertexInputState){
-                .num_vertex_buffers = 1,
-                .num_vertex_attributes = 2,
-                .vertex_buffer_descriptions = &(SDL_GPUVertexBufferDescription){
-                    .slot = 0,
-                    .pitch = sizeof(struct VertexData),
-                    .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX,
-                    // .instance_step_rate = 0
-                },
-                .vertex_attributes = (SDL_GPUVertexAttribute[]){
-                    [0] = {
-                        .location = 0,
-                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
-                        .offset = offsetof(struct VertexData,position),
-                    },
-                    [1] = {
-                        .location = 1,
-                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-                        .offset = offsetof(struct VertexData,color),
-                    }
-                }
-    }; 
 
-    SDL_GPUGraphicsPipeline* pipeline = SDL_CreateGPUGraphicsPipeline(s_device,
-        &(SDL_GPUGraphicsPipelineCreateInfo){
-            .vertex_shader = vert,
-            .fragment_shader = frag,
-            .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
-            .target_info = (SDL_GPUGraphicsPipelineTargetInfo ){
-                .num_color_targets = 1,
-                .color_target_descriptions = &(SDL_GPUColorTargetDescription){
-                    .blend_state = (SDL_GPUColorTargetBlendState ){
-                        .enable_blend = false
-                    },
-                    .format = SDL_GetGPUSwapchainTextureFormat(s_device, s_window)
-                }
-            },
-            .vertex_input_state = vertexInput
-        }
-    );
+
+
+
 
     return (struct Window){
             .window = s_window,
-            .device = s_device,
-            .vertexShader = vert,
-            .fragmentShader = frag,
-            .pipeline = pipeline
+            .device = s_device
         };
 }
 
@@ -231,3 +188,49 @@ SDL_GPUBufferBinding createBufferBinding(SDL_GPUBuffer* buffer){
     };
 }
 
+void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Window* window){
+
+    SDL_GPUVertexInputState vertexInput = (SDL_GPUVertexInputState){
+                .num_vertex_buffers = 1,
+                .num_vertex_attributes = 2,
+                .vertex_buffer_descriptions = &(SDL_GPUVertexBufferDescription){
+                    .slot = 0,
+                    .pitch = sizeof(struct VertexData),
+                    .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX,
+                    // .instance_step_rate = 0
+                },
+                .vertex_attributes = (SDL_GPUVertexAttribute[]){
+                    [0] = {
+                        .location = 0,
+                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+                        .offset = offsetof(struct VertexData,position),
+                    },
+                    [1] = {
+                        .location = 1,
+                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+                        .offset = offsetof(struct VertexData,color),
+                    }
+                }
+    }; 
+
+    window->pipeline = SDL_CreateGPUGraphicsPipeline(window->device,
+        &(SDL_GPUGraphicsPipelineCreateInfo){
+            .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
+            .target_info = (SDL_GPUGraphicsPipelineTargetInfo ){
+                .num_color_targets = 1,
+                .color_target_descriptions = &(SDL_GPUColorTargetDescription){
+                    .blend_state = (SDL_GPUColorTargetBlendState ){
+                        .enable_blend = false
+                    },
+                    .format = SDL_GetGPUSwapchainTextureFormat(window->device, window->window)
+                }
+            },
+            .vertex_input_state = vertexInput,
+            .vertex_shader = vertexShader,
+            .fragment_shader = fragmentShader
+        }
+    );
+    if(window->pipeline == NULL){
+        printf("Erro graphics pipeline :%s\n",SDL_GetError());
+    }
+}
