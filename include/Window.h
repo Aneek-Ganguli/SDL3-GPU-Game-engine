@@ -5,6 +5,8 @@
 
 #include "VertexData.h"
 
+static const char* path = NULL;
+
 typedef struct Window
 {
     SDL_Window *window;
@@ -35,3 +37,4 @@ SDL_GPUTransferBufferLocation createTransferBufferLocation(SDL_GPUTransferBuffer
 SDL_GPUBufferRegion createBufferRegion(Uint32 size, SDL_GPUBuffer *buffer);
 void uploadBuffer(SDL_GPUTransferBufferLocation *transferBufferLocation, SDL_GPUBufferRegion *bufferRegion, struct Window *window);
 SDL_GPUBufferBinding createBufferBinding(SDL_GPUBuffer *buffer);
+SDL_Surface* loadImage(const char* imageFilename, int desiredChannels);

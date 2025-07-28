@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 #include <cglm/cglm.h>
 #include "Window.h"
 #include "VertexData.h"
@@ -70,11 +71,7 @@ struct Window  createWindow(){
 
     SDL_ClaimWindowForGPUDevice(s_device,s_window);
 
-
-
-
-
-
+    path = SDL_GetBasePath();
 
     return (struct Window){
             .window = s_window,
@@ -233,4 +230,35 @@ void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Windo
     if(window->pipeline == NULL){
         printf("Erro graphics pipeline :%s\n",SDL_GetError());
     }
+}
+
+SDL_Surface* loadImage(const char* imageFilename, int desiredChannels){
+	char fullPath[256];
+	SDL_Surface *result;
+	SDL_PixelFormat format;
+
+	SDL_snprintf(fullPath, sizeof(fullPath), "%s/%s", path, imageFilename);
+
+	result = IMG_Load(fullPath);
+    
+	if (result == NULL){
+		SDL_Log("Failed to load BMP: %s", SDL_GetError());
+		return NULL;
+	}
+
+	if (desiredChannels == 4){
+		format = SDL_PIXELFORMAT_ABGR8888;
+	}
+	else{
+		SDL_assert(!"Unexpected desiredChannels");
+		SDL_DestroySurface(result);
+		return NULL;
+	}
+	if (result->format != format){
+		SDL_Surface *next = SDL_ConvertSurface(result, format);
+		SDL_DestroySurface(result);
+		result = next;
+	}
+
+	return result;
 }

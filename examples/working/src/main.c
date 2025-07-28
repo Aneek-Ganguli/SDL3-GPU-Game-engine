@@ -18,6 +18,7 @@ int main(){
     
     SDL_SetLogPriorities(SDL_LOG_PRIORITY_VERBOSE);
 
+    // printf("oui%s",SDL_GetBasePath());
 
     struct Window window = createWindow();
     SDL_GPUShader* frag = load_shader(window.device,"../bin/shader.spv.frag",SDL_GPU_SHADERSTAGE_FRAGMENT,
@@ -32,13 +33,16 @@ int main(){
 	SDL_GetWindowSize(window.window, &width, &height);
     
 
-    SDL_Surface *surface = IMG_Load("my_image.png");
-    if(surface == NULL){
-        printf("Error: %s\n",SDL_GetError());
-    }
+    // SDL_Surface *surface = IMG_Load("my_image.png");
+    // if(surface == NULL){
+    //     printf("Error: %s\n",SDL_GetError());
+    // }
 
     // Now create a GPU texture and upload
     
+    
+
+    SDL_Surface* oui = loadImage("res/math.png",4);
 
 
     struct VertexData vertices[] = {
@@ -68,7 +72,7 @@ int main(){
 
 	Uint64 lastTime = SDL_GetPerformanceCounter();
 
-        
+    
 
     startCopyPass(&window);
 

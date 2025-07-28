@@ -5,6 +5,8 @@
 #include "Window.h"
 #include "VertexData.h"
 
+
+
 typedef struct Entity{
     SDL_GPUBuffer* vertexBuffer;
     SDL_GPUTransferBuffer* transferBuffer;
