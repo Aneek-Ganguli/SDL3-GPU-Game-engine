@@ -4,8 +4,8 @@
 #include "Entity.h"
 #include "VertexData.h"
 
-void createEntity(struct VertexData* vertexData, size_t verticies_count,Uint32* indicies,
-    size_t indicies_count,  struct Window* window,struct Entity* e){
+void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 *indicies,
+                  size_t indicies_count, const char* fileName,struct Window *window, struct Entity *e){
     
     int vertexSize = sizeof(struct VertexData) * verticies_count;
     int indexSize = sizeof(Uint32) * indicies_count;
@@ -20,8 +20,8 @@ void createEntity(struct VertexData* vertexData, size_t verticies_count,Uint32* 
         printf("Error creating vertex buffer: %s\n",SDL_GetError());
     }
 
-    
-
+    e->surface = loadImage(fileName,4);
+    e->texture = createTexture(e->surface,e->surface->w * e->surface->h*4,window);
 
     e->indexBuffer = createBuffer(indexSize,SDL_GPU_BUFFERUSAGE_INDEX,window);
 
@@ -61,6 +61,9 @@ void createEntity(struct VertexData* vertexData, size_t verticies_count,Uint32* 
         vertexSize);
 
     e->indexBufferRegion = createBufferRegion(indexSize,e->indexBuffer);
+
+    //texture
+    // e->textureTransferBuffer = createBuffer();
 
     uploadBuffer(&e->vertexTransferBufferLocation, &e->vertexBufferRegion, window);
     uploadBuffer(&e->indexTransferBufferLocation, &e->indexBufferRegion, window);

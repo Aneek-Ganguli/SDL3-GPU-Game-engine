@@ -189,7 +189,7 @@ void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Windo
 
     SDL_GPUVertexInputState vertexInput = (SDL_GPUVertexInputState){
                 .num_vertex_buffers = 1,
-                .num_vertex_attributes = 2,
+                .num_vertex_attributes = 3,
                 .vertex_buffer_descriptions = &(SDL_GPUVertexBufferDescription){
                     .slot = 0,
                     .pitch = sizeof(struct VertexData),
@@ -204,6 +204,11 @@ void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Windo
                     },
                     [1] = {
                         .location = 1,
+                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+                        .offset = offsetof(struct VertexData,texCoords),
+                    },
+                    [2] = {
+                        .location = 2,
                         .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
                         .offset = offsetof(struct VertexData,color),
                     }
@@ -261,4 +266,16 @@ SDL_Surface* loadImage(const char* imageFilename, int desiredChannels){
 	}
 
 	return result;
+}
+
+SDL_GPUTexture* createTexture(SDL_Surface* surface,Uint32 size,Window* window){
+    return SDL_CreateGPUTexture(window->device, &(SDL_GPUTextureCreateInfo){
+		.type = SDL_GPU_TEXTURETYPE_2D_ARRAY,
+		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+		.width = surface->w,
+		.height = surface->h,
+		.layer_count_or_depth = 2,
+		.num_levels = 1,
+		.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER
+	});
 }
