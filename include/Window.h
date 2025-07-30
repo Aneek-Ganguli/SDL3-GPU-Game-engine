@@ -19,6 +19,7 @@ typedef struct Window
     SDL_GPUShader *vertexShader;
     SDL_GPUShader *fragmentShader;
     SDL_GPUCopyPass *copyPass;
+    SDL_GPUSampler* sampler;
 } Window;
 
 struct Window createWindow();
@@ -39,3 +40,5 @@ void uploadBuffer(SDL_GPUTransferBufferLocation *transferBufferLocation, SDL_GPU
 SDL_GPUBufferBinding createBufferBinding(SDL_GPUBuffer *buffer);
 SDL_Surface* loadImage(const char* imageFilename, int desiredChannels);
 SDL_GPUTexture* createTexture(SDL_Surface* surface,Uint32 size,Window* window);
+SDL_GPUSampler* createGPUSampler(Window* window);
+void uploadTexture(SDL_GPUTextureTransferInfo textureTransferInfo,SDL_GPUTextureRegion textureRegion,Window* window);

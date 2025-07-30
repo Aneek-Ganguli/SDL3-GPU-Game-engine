@@ -68,9 +68,9 @@ int main(){
     struct Entity ent;
     createEntity(vertices,sizeof(vertices)/sizeof(vertices[0]),
                  indices,sizeof(indices)/sizeof(indices[0]),
-                 "res/math.png",&window,&ent);
+                 "res/ravioli.bmp",&window,&ent);
     
-    endCopyPass(&window);
+    endCopyPass(&window);   
 
 
     mat4 mvp;

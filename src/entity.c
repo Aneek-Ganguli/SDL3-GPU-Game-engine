@@ -20,11 +20,34 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
         printf("Error creating vertex buffer: %s\n",SDL_GetError());
     }
 
+    //tetxture
+
+    
+
     e->surface = loadImage(fileName,4);
-    e->texture = createTexture(e->surface,e->surface->w * e->surface->h*4,window);
+    e->texture =SDL_CreateGPUTexture(window->device, &(SDL_GPUTextureCreateInfo){
+		.type = SDL_GPU_TEXTURETYPE_2D_ARRAY,
+		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+		.width = e->surface->w,
+		.height = e->surface->h,
+		.layer_count_or_depth = 2,
+		.num_levels = 1,
+		.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER
+	});
+    e->textureTransferBuffer = createTransferBuffer(e->surface->w * e->surface->h*4,window);
+    e->textureTransferMem = SDL_MapGPUTransferBuffer(window->device, e->textureTransferBuffer, false);
+	memcpy(e->textureTransferMem, e->surface->pixels, e->surface->w* e->surface->h  * 4);
+    SDL_UnmapGPUTransferBuffer(window->device, e->textureTransferBuffer);
 
+    e->textureRegion.texture = e->texture;
+	e->textureRegion.w = e->surface->w;
+	e->textureRegion.h = e->surface->h;
+    e->textureRegion.d = 1;
+
+    window->sampler = createGPUSampler(window);
+
+    //data 
     e->indexBuffer = createBuffer(indexSize,SDL_GPU_BUFFERUSAGE_INDEX,window);
-
     e->vertexData = vertexData;
     e->indicies = indicies;
 
@@ -63,10 +86,17 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
     e->indexBufferRegion = createBufferRegion(indexSize,e->indexBuffer);
 
     //texture
-    // e->textureTransferBuffer = createBuffer();
+    e->textureSamplerBinding.texture = e->texture;
+	e->textureSamplerBinding.sampler = window->sampler;
+
+    // e->textureTransferInfo;
+	e->textureTransferInfo.transfer_buffer = e->textureTransferBuffer;
+	e->textureTransferInfo.offset = 0;
 
     uploadBuffer(&e->vertexTransferBufferLocation, &e->vertexBufferRegion, window);
     uploadBuffer(&e->indexTransferBufferLocation, &e->indexBufferRegion, window);
+    uploadTexture(e->textureTransferInfo,e->textureRegion,window);
+    // uploadBuffer(&e->text)
 
     e->vertexBufferBinding = createBufferBinding(e->vertexBuffer);
     e->indexBufferBinding = createBufferBinding(e->indexBuffer);
@@ -76,5 +106,6 @@ void drawEntity(struct UBO* ubo,size_t size,struct Window* window,struct Entity*
     SDL_BindGPUVertexBuffers(window->renderPass, 0, &e->vertexBufferBinding, 1);
     SDL_BindGPUIndexBuffer(window->renderPass, &e->indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
     SDL_PushGPUVertexUniformData(window->commandBuffer, 0, &ubo, sizeof(ubo));
+    SDL_BindGPUFragmentSamplers(window->renderPass, 0,&e->textureSamplerBinding,1);
     SDL_DrawGPUIndexedPrimitives(window->renderPass, e->indiciesCount, 1, 0, 0, 0);
 }

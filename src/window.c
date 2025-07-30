@@ -238,14 +238,13 @@ void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Windo
 }
 
 SDL_Surface* loadImage(const char* imageFilename, int desiredChannels){
-	char fullPath[256];
+		char fullPath[256];
 	SDL_Surface *result;
 	SDL_PixelFormat format;
 
 	SDL_snprintf(fullPath, sizeof(fullPath), "%s/%s", path, imageFilename);
 
-	result = IMG_Load(fullPath);
-    
+	result = SDL_LoadBMP(fullPath);
 	if (result == NULL){
 		SDL_Log("Failed to load BMP: %s", SDL_GetError());
 		return NULL;
@@ -278,4 +277,19 @@ SDL_GPUTexture* createTexture(SDL_Surface* surface,Uint32 size,Window* window){
 		.num_levels = 1,
 		.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER
 	});
+}
+
+SDL_GPUSampler* createGPUSampler(Window* window){
+    return SDL_CreateGPUSampler(window->device,&(SDL_GPUSamplerCreateInfo){
+		.min_filter = SDL_GPU_FILTER_NEAREST,
+		.mag_filter = SDL_GPU_FILTER_NEAREST,
+		.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
+		.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+		.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+		.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+	});
+}
+
+void uploadTexture(SDL_GPUTextureTransferInfo textureTransferInfo,SDL_GPUTextureRegion textureRegion,Window* window){
+    SDL_UploadToGPUTexture(window->copyPass,&textureTransferInfo,&textureRegion,false);
 }

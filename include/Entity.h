@@ -23,6 +23,10 @@ typedef struct Entity
     SDL_GPUTexture *texture;
     SDL_GPUTransferBuffer *textureTransferBuffer;
     SDL_Surface* surface;
+    void* textureTransferMem;
+    SDL_GPUTextureRegion textureRegion;
+    SDL_GPUTextureSamplerBinding textureSamplerBinding;
+    SDL_GPUTextureTransferInfo textureTransferInfo;
 } Entity;
 
 void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 *indicies,
