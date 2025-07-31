@@ -2,3 +2,4 @@ bin/*
 .vscode/*
 examples/working/bin/*
 examples/window/bin/*
+errors.txt

@@ -244,7 +244,7 @@ SDL_Surface* loadImage(const char* imageFilename, int desiredChannels){
 
 	SDL_snprintf(fullPath, sizeof(fullPath), "%s/%s", path, imageFilename);
 
-	result = SDL_LoadBMP(fullPath);
+	result = IMG_Load(fullPath);
 	if (result == NULL){
 		SDL_Log("Failed to load BMP: %s", SDL_GetError());
 		return NULL;
