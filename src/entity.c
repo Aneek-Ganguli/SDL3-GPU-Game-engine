@@ -29,13 +29,13 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
 		.type = SDL_GPU_TEXTURETYPE_2D_ARRAY,
 		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
         .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER,
-		.width = e->surface->w,
-		.height = e->surface->h,
+		.width = 32,
+		.height = 32,
 		.layer_count_or_depth = 2,
 		.num_levels = 1,
 		// .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER
 	});
-    e->textureTransferBuffer = createTransferBuffer(e->surface->w * e->surface->h*4,window);
+    e->textureTransferBuffer = createTransferBuffer(4096,window);
     e->textureTransferMem = SDL_MapGPUTransferBuffer(window->device, e->textureTransferBuffer, false);
     if(!e->textureTransferMem){
         printf("Error creating transfer memory: %s\n",SDL_GetError());
@@ -43,12 +43,12 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
     if(e->surface->pixels == NULL){
         printf("Error creating transfer memory: %s\n",SDL_GetError());
     }
-	memcpy(e->textureTransferMem, e->surface->pixels, e->surface->w* e->surface->h  * 4);
+	memcpy(e->textureTransferMem, e->surface->pixels, 4096);
     // SDL_UnmapGPUTransferBuffer(window->device, e->textureTransferBuffer);
 
     e->textureRegion.texture = e->texture;
-	e->textureRegion.w = e->surface->w;
-	e->textureRegion.h = e->surface->h;
+	e->textureRegion.w = 32;
+	e->textureRegion.h = 32;
     e->textureRegion.d = 1;
 
     window->sampler = createGPUSampler(window);
@@ -63,6 +63,9 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
         window);
     
     if(!e->transferBuffer){
+        printf("Error creating vertex transfer buffer: %s\n",SDL_GetError());
+    }
+    if(!e->textureTransferBuffer){
         printf("Error creating vertex transfer buffer: %s\n",SDL_GetError());
     }
 

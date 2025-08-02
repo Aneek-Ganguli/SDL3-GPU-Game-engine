@@ -68,14 +68,10 @@ int main(){
     struct Entity ent;
     createEntity(vertices,sizeof(vertices)/sizeof(vertices[0]),
                  indices,sizeof(indices)/sizeof(indices[0]),
-                 "res/cobblestone.png",&window,&ent);
+                 "res/life.png",&window,&ent);
     
     endCopyPass(&window);   
 
-
-
-
-    
 
 
     mat4 mvp;
@@ -84,7 +80,6 @@ int main(){
     bool running = true;
     SDL_Event event;
     while (running){
-
         Uint64 currentTime = SDL_GetPerformanceCounter();
 		float deltaTime = (float)(currentTime - lastTime) / SDL_GetPerformanceFrequency();
 		lastTime = currentTime;
