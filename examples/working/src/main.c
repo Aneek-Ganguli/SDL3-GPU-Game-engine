@@ -35,10 +35,10 @@ int main(){
     
 
     struct VertexData vertices[] = {
-        {{-0.5f,  0.5f, 0.0f },{0,1} , {1.0f, 0.0f, 0.0f, 1.0f}}, // Triangle 1
-        {{ 0.5f,  0.5f, 0.0f },{1,1} , {0.0f, 1.0f, 0.0f, 1.0f}},
-        {{-0.5f, -0.5f, 0.0f },{0,0} , {0.0f, 0.0f, 1.0f, 1.0f}},
-        {{ 0.5f, -0.5f, 0.0f },{1,0} , {1.0f, 1.0f, 0.0f, 1.0f}}, // Triangle 2
+        {{-0.5f,  0.5f, 0.0f } , {1.0f, 1.0f, 1.0f, 1.0f},{0,1}}, // Triangle 1
+        {{ 0.5f,  0.5f, 0.0f } , {1.0f, 1.0f, 1.0f, 1.0f},{1,1}},
+        {{-0.5f, -0.5f, 0.0f } , {1.0f, 1.0f, 1.0f, 1.0f},{0,0}},
+        {{ 0.5f, -0.5f, 0.0f } , {1.0f, 1.0f, 1.0f, 1.0f},{1,0}}, // Triangle 2
     };
 
     Uint32 indices[] = {
@@ -68,10 +68,10 @@ int main(){
     struct Entity ent;
     createEntity(vertices,sizeof(vertices)/sizeof(vertices[0]),
                  indices,sizeof(indices)/sizeof(indices[0]),
-                 "res/life.png",&window,&ent);
+                 "res/cobblestone.png",&window,&ent);
     
     endCopyPass(&window);   
-
+ 
 
 
     mat4 mvp;

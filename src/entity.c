@@ -20,22 +20,10 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
         printf("Error creating vertex buffer: %s\n",SDL_GetError());
     }
 
-    //tetxture
-
-    
-
     e->surface = loadImage(fileName,4);
-    e->texture =SDL_CreateGPUTexture(window->device, &(SDL_GPUTextureCreateInfo){
-		.type = SDL_GPU_TEXTURETYPE_2D_ARRAY,
-		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-        .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER,
-		.width = 32,
-		.height = 32,
-		.layer_count_or_depth = 2,
-		.num_levels = 1,
-		// .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER
-	});
-    e->textureTransferBuffer = createTransferBuffer(4096,window);
+
+    e->texture = createTexture(e->surface,window);
+    e->textureTransferBuffer = createTransferBuffer(e->surface->w * e->surface->h * 4,window);
     e->textureTransferMem = SDL_MapGPUTransferBuffer(window->device, e->textureTransferBuffer, false);
     if(!e->textureTransferMem){
         printf("Error creating transfer memory: %s\n",SDL_GetError());
@@ -43,13 +31,16 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
     if(e->surface->pixels == NULL){
         printf("Error creating transfer memory: %s\n",SDL_GetError());
     }
-	memcpy(e->textureTransferMem, e->surface->pixels, 4096);
+	memcpy(e->textureTransferMem, e->surface->pixels, e->surface->w * e->surface->h * 4);
     // SDL_UnmapGPUTransferBuffer(window->device, e->textureTransferBuffer);
 
+    e->textureRegion = (SDL_GPUTextureRegion){0};
     e->textureRegion.texture = e->texture;
-	e->textureRegion.w = 32;
-	e->textureRegion.h = 32;
+	e->textureRegion.w = e->surface->w;
+	e->textureRegion.h = e->surface->h;
     e->textureRegion.d = 1;
+    e->textureTransferInfo.offset = 0;
+
 
     window->sampler = createGPUSampler(window);
 
@@ -100,16 +91,25 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
 	e->textureSamplerBinding.sampler = window->sampler;
 
     // e->textureTransferInfo;
+    e->textureTransferInfo = (SDL_GPUTextureTransferInfo){0};
 	e->textureTransferInfo.transfer_buffer = e->textureTransferBuffer;
 	e->textureTransferInfo.offset = 0;
 
+    printf("Transfer offset: %u\n", e->textureTransferInfo.offset);
+    printf("Region offset: %d,%d,%d\n", e->textureRegion.x, e->textureRegion.y, e->textureRegion.z);
+    printf("Region extent: %d,%d,%d\n", e->textureRegion.w, e->textureRegion.h, e->textureRegion.d);
     uploadBuffer(&e->vertexTransferBufferLocation, &e->vertexBufferRegion, window);
     uploadBuffer(&e->indexTransferBufferLocation, &e->indexBufferRegion, window);
     uploadTexture(e->textureTransferInfo,e->textureRegion,window);
     // uploadBuffer(&e->text)
+    
+    // SDL_UploadToGPUTexture(window->copyPass,&e->textureTransferInfo,&e->textureRegion,false);
 
     e->vertexBufferBinding = createBufferBinding(e->vertexBuffer);
     e->indexBufferBinding = createBufferBinding(e->indexBuffer);
+    printf("Surface: %dx%d\n", e->surface->w, e->surface->h);
+    printf("Texture region: %dx%d\n", e->textureRegion.w, e->textureRegion.h);
+    SDL_UnmapGPUTransferBuffer(window->device, e->textureTransferBuffer);
 }
 
 void drawEntity(struct UBO* ubo,size_t size,struct Window* window,struct Entity* e){

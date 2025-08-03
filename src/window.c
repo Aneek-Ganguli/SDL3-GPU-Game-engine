@@ -204,13 +204,13 @@ void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Windo
                     },
                     [1] = {
                         .location = 1,
-                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-                        .offset = offsetof(struct VertexData,texCoords),
+                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+                        .offset = offsetof(struct VertexData,color),
                     },
                     [2] = {
                         .location = 2,
-                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-                        .offset = offsetof(struct VertexData,color),
+                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+                        .offset = offsetof(struct VertexData,texCoords),
                     }
                 }
     }; 
@@ -267,16 +267,17 @@ SDL_Surface* loadImage(const char* imageFilename, int desiredChannels){
 	return result;
 }
 
-SDL_GPUTexture* createTexture(SDL_Surface* surface,Uint32 size,Window* window){
+SDL_GPUTexture* createTexture(SDL_Surface* surface,Window* window){
     return SDL_CreateGPUTexture(window->device, &(SDL_GPUTextureCreateInfo){
-		.type = SDL_GPU_TEXTURETYPE_2D_ARRAY,
+		// .type = SDL_GPU_TEXTURETYPE_2D,
 		.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
 		.width = surface->w,
 		.height = surface->h,
-		.layer_count_or_depth = 2,
+		.layer_count_or_depth = 1,
 		.num_levels = 1,
 		.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER
-	});
+    });
+
 }
 
 SDL_GPUSampler* createGPUSampler(Window* window){

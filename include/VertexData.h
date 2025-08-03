@@ -2,14 +2,14 @@
 #include <SDL3/SDL.h>
 #include <cglm/cglm.h>
 
-struct Vec2{
+typedef struct Vec2{
     float x,y;
-};
+} Vec2;
 
 struct VertexData {
     vec3 position;
-    struct Vec2 texCoords;
     SDL_FColor color;
+    vec2 texCoords;
 };
 
 struct UBO {
