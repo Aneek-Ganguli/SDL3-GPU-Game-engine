@@ -22,8 +22,21 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
 
     e->surface = loadImage(fileName,4);
 
-    e->texture = createTexture(e->surface,window);
-    e->textureTransferBuffer = createTransferBuffer(e->surface->w * e->surface->h * 4,window);
+    e->texture = SDL_CreateGPUTexture(window->device,&(SDL_GPUTextureCreateInfo){
+        .format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+        .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER,
+        .width = e->surface->w,
+        .height = e->surface->h,
+        .layer_count_or_depth = 1,
+        .num_levels = 1
+    });
+
+
+    e->textureTransferBuffer = SDL_CreateGPUTransferBuffer(window->device,&(SDL_GPUTransferBufferCreateInfo){
+        .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+        .size = e->surface->w * e->surface->h * 4
+    }); //createTransferBuffer(e->surface->w * e->surface->h * 4,window);
+
     e->textureTransferMem = SDL_MapGPUTransferBuffer(window->device, e->textureTransferBuffer, false);
     if(!e->textureTransferMem){
         printf("Error creating transfer memory: %s\n",SDL_GetError());
@@ -31,6 +44,7 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
     if(e->surface->pixels == NULL){
         printf("Error creating transfer memory: %s\n",SDL_GetError());
     }
+
 	memcpy(e->textureTransferMem, e->surface->pixels, e->surface->w * e->surface->h * 4);
     // SDL_UnmapGPUTransferBuffer(window->device, e->textureTransferBuffer);
 
@@ -100,7 +114,9 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
     printf("Region extent: %d,%d,%d\n", e->textureRegion.w, e->textureRegion.h, e->textureRegion.d);
     uploadBuffer(&e->vertexTransferBufferLocation, &e->vertexBufferRegion, window);
     uploadBuffer(&e->indexTransferBufferLocation, &e->indexBufferRegion, window);
-    uploadTexture(e->textureTransferInfo,e->textureRegion,window);
+
+    // uploadTexture(e->textureTransferInfo,e->textureRegion,window);
+     SDL_UploadToGPUTexture(window->copyPass,&e->textureTransferInfo,&e->textureRegion,false);
     // uploadBuffer(&e->text)
     
     // SDL_UploadToGPUTexture(window->copyPass,&e->textureTransferInfo,&e->textureRegion,false);

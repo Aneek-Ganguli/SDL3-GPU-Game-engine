@@ -4,3 +4,4 @@ examples/working/bin/*
 examples/window/bin/*
 errors.txt
 include/cglm/*
+include/stb/*
