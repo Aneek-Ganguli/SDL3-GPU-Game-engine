@@ -8,8 +8,8 @@ typedef struct Vec2{
 
 struct VertexData {
     vec3 position;
-    SDL_FColor color;
     vec2 texCoords;
+    SDL_FColor color;
 };
 
 struct UBO {

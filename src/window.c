@@ -204,13 +204,13 @@ void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Windo
                     },
                     [1] = {
                         .location = 1,
-                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
-                        .offset = offsetof(struct VertexData,color),
+                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
+                        .offset = offsetof(struct VertexData,texCoords),
                     },
                     [2] = {
                         .location = 2,
-                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2,
-                        .offset = offsetof(struct VertexData,texCoords),
+                        .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4,
+                        .offset = offsetof(struct VertexData,color),
                     }
                 }
     }; 
@@ -235,6 +235,8 @@ void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Windo
     if(window->pipeline == NULL){
         printf("Erro graphics pipeline :%s\n",SDL_GetError());
     }
+
+    window->sampler = createGPUSampler(window);
 }
 
 SDL_Surface* loadImage(const char* imageFilename, int desiredChannels){

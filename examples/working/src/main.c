@@ -22,7 +22,7 @@ int main(){
 
     struct Window window = createWindow();
     SDL_GPUShader* frag = load_shader(window.device,"../bin/shader.spv.frag",SDL_GPU_SHADERSTAGE_FRAGMENT,
-    0,0,0,0);
+    1,0,0,0);
 
     SDL_GPUShader* vert = load_shader(window.device,"../bin/shader.spv.vert",SDL_GPU_SHADERSTAGE_VERTEX,
     0,1,0,0);
@@ -35,10 +35,10 @@ int main(){
     
 
     struct VertexData vertices[] = {
-        {{-0.5f,  0.5f, 0.0f } , {1.0f, 0.0f, 0.0f, 1.0f},{0,1}}, // Triangle 1
-        {{ 0.5f,  0.5f, 0.0f } , {0.0f, 1.0f, 0.0f, 1.0f},{1,1}},
-        {{-0.5f, -0.5f, 0.0f } , {0.0f, 0.0f, 1.0f, 1.0f},{0,0}},
-        {{ 0.5f, -0.5f, 0.0f } , {1.0f, 1.0f, 0.0f, 1.0f},{1,0}}, // Triangle 2
+        {{-0.5f,  0.5f, 0.0f }, {0,1}, {1.0f, 0.0f, 0.0f, 1.0f}}, // Triangle 1
+        {{ 0.5f,  0.5f, 0.0f }, {1,1}, {0.0f, 1.0f, 0.0f, 1.0f}},
+        {{-0.5f, -0.5f, 0.0f }, {0,0}, {0.0f, 0.0f, 1.0f, 1.0f}},
+        {{ 0.5f, -0.5f, 0.0f }, {1,0}, {1.0f, 1.0f, 0.0f, 1.0f}}, // Triangle 2
     };
 
     Uint32 indices[] = {
@@ -68,7 +68,7 @@ int main(){
     struct Entity ent;
     createEntity(vertices,sizeof(vertices)/sizeof(vertices[0]),
                  indices,sizeof(indices)/sizeof(indices[0]),
-                 "res/cobblestone.png",&window,&ent);
+                 "res/meow.png",&window,&ent);
     
     endCopyPass(&window);   
  
