@@ -32,16 +32,16 @@ int main(void)
 
     // Positions + UVs; colors are ignored by the shaders above.
     struct VertexData vertices[] = {
-        {{-0.5f,  0.5f, 0.0f}, {0, 1}, {1,1,1,1}},
-        {{ 0.5f,  0.5f, 0.0f}, {1, 1}, {1,1,1,1}},
-        {{-0.5f, -0.5f, 0.0f}, {0, 0}, {1,1,1,1}},
-        {{ 0.5f, -0.5f, 0.0f}, {1, 0}, {1,1,1,1}},
+        {{-0.5f,  0.5f, 0.0f}, {1, 0}, {1,1,1,1}},
+        {{ 0.5f,  0.5f, 0.0f}, {0, 0}, {1,1,1,1}},
+        {{-0.5f, -0.5f, 0.0f}, {1, 1}, {1,1,1,1}},
+        {{ 0.5f, -0.5f, 0.0f}, {0, 1}, {1,1,1,1}},
     };
     Uint32 indices[] = {0,1,2, 2,1,3};
 
     startCopyPass(&window);
     struct Entity ent;
-    createEntity(vertices, 4, indices, 6, "res/meow.png", &window, &ent);
+    createEntity(vertices, 4, indices, 6, "res/math.png", &window, &ent);
     endCopyPass(&window);
 
     mat4 P;
