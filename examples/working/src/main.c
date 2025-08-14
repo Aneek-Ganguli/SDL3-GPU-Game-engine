@@ -1,99 +1,78 @@
 #include <stdio.h>
 #include <SDL3/SDL.h>
-#include <cglm/cglm.h>
 #include <SDL3_image/SDL_image.h>
+#include <cglm/cglm.h>
 
 #include "Window.h"
 #include "Entity.h"
 #include "VertexData.h"
 
-
-int main(){
-    
-    if(!SDL_Init(SDL_INIT_VIDEO)){
-        printf("Error initializing SDL: %s\n", SDL_GetError());
+int main(void)
+{
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        printf("SDL_Init failed: %s\n", SDL_GetError());
         return -1;
     }
+    // IMG_Init(IMG_INIT_PNG);
 
     
-    SDL_SetLogPriorities(SDL_LOG_PRIORITY_VERBOSE);
-
-    // printf("oui%s",SDL_GetBasePath());
 
     struct Window window = createWindow();
-    SDL_GPUShader* frag = load_shader(window.device,"../bin/shader.spv.frag",SDL_GPU_SHADERSTAGE_FRAGMENT,
-    1,0,0,0);
 
-    SDL_GPUShader* vert = load_shader(window.device,"../bin/shader.spv.vert",SDL_GPU_SHADERSTAGE_VERTEX,
-    0,1,0,0);
-    
-    setShader(vert,frag,&window);
+    SDL_GPUShader* vert = load_shader(window.device, "../bin/shader/shader.spv.vert",
+        SDL_GPU_SHADERSTAGE_VERTEX, 0, 1, 0, 0);
+    SDL_GPUShader* frag = load_shader(window.device, "../bin/shader/shader.spv.frag",
+        SDL_GPU_SHADERSTAGE_FRAGMENT, 1, 0, 0, 0);
+
+    // IMPORTANT: pipeline’s vertex layout must match the struct we use below.
+    setShader(vert, frag, &window);
 
     int width, height;
-	SDL_GetWindowSize(window.window, &width, &height);
-    
-    
+    SDL_GetWindowSize(window.window, &width, &height);
 
+    // Positions + UVs; colors are ignored by the shaders above.
     struct VertexData vertices[] = {
-        {{-0.5f,  0.5f, 0.0f }, {0,1}, {1.0f, 0.0f, 0.0f, 1.0f}}, // Triangle 1
-        {{ 0.5f,  0.5f, 0.0f }, {1,1}, {0.0f, 1.0f, 0.0f, 1.0f}},
-        {{-0.5f, -0.5f, 0.0f }, {0,0}, {0.0f, 0.0f, 1.0f, 1.0f}},
-        {{ 0.5f, -0.5f, 0.0f }, {1,0}, {1.0f, 1.0f, 0.0f, 1.0f}}, // Triangle 2
+        {{-0.5f,  0.5f, 0.0f}, {0, 1}, {1,1,1,1}},
+        {{ 0.5f,  0.5f, 0.0f}, {1, 1}, {1,1,1,1}},
+        {{-0.5f, -0.5f, 0.0f}, {0, 0}, {1,1,1,1}},
+        {{ 0.5f, -0.5f, 0.0f}, {1, 0}, {1,1,1,1}},
     };
-
-    Uint32 indices[] = {
-        0, 1, 2,
-        2, 1, 3
-    };
-
-	const float rotationSpeed = glm_rad(90.0f);
-
-	float rotation = 0.0f;
-
-	// ...existing code...
-    mat4 Projection;
-    glm_perspective(glm_rad(70.0f), (float)width / height, 0.000001f, 10000.0f, Projection);
-
-    mat4 model;
-    glm_mat4_identity(model);
-    glm_translate(model, (vec3){0.0f, 0.0f, -10.0f});
-    //glm_rotate(model, rotation, (vec3){0.0f, 1.0f, 0.0f});
-
-	Uint64 lastTime = SDL_GetPerformanceCounter();
-
-    
+    Uint32 indices[] = {0,1,2, 2,1,3};
 
     startCopyPass(&window);
-
     struct Entity ent;
-    createEntity(vertices,sizeof(vertices)/sizeof(vertices[0]),
-                 indices,sizeof(indices)/sizeof(indices[0]),
-                 "res/meow.png",&window,&ent);
-    
-    endCopyPass(&window);   
- 
+    createEntity(vertices, 4, indices, 6, "res/meow.png", &window, &ent);
+    endCopyPass(&window);
 
+    mat4 P;
+    glm_perspective(glm_rad(70.0f), (float)width/height, 0.1f, 1000.0f, P);
 
-    mat4 mvp;
-    struct UBO ubo = {0};
+    Uint64 last = SDL_GetPerformanceCounter();
+    float rot = 0.0f;
 
     bool running = true;
-    SDL_Event event;
-    while (running){
-        Uint64 currentTime = SDL_GetPerformanceCounter();
-		float deltaTime = (float)(currentTime - lastTime) / SDL_GetPerformanceFrequency();
-		lastTime = currentTime;
+    while (running) {
+        SDL_Event ev;
+        while (SDL_PollEvent(&ev)) if (ev.type == SDL_EVENT_QUIT) running = false;
 
-        while(SDL_PollEvent(&event)){
-            if(event.type == SDL_EVENT_QUIT){
-                running = false;
-            }
-        }
+        Uint64 now = SDL_GetPerformanceCounter();
+        float dt = (float)(now - last) / SDL_GetPerformanceFrequency();
+        last = now;
+        rot += glm_rad(60.0f) * dt;
+
+        mat4 M;
+        glm_mat4_identity(M);
+        glm_translate(M, (vec3){0.0f, 0.0f, -3.0f});
+        glm_rotate(M, rot, (vec3){0.0f, 1.0f, 0.0f});
+
+        struct UBO ubo;
+        glm_mat4_mul(P, M, ubo.mvp);
+
         newFrame(&window);
-        drawEntity(&ubo,sizeof(ubo),&window,&ent);
-        endFrame(&window); 
+        drawEntity(&ubo, sizeof(ubo), &window, &ent);
+        endFrame(&window);
     }
-    
+
     SDL_Quit();
     return 0;
 }
