@@ -6,6 +6,7 @@
         "stdio.h": "c",
         "sdl.h": "c",
         "vertexdata.h": "c",
-        "vec2.h": "c"
+        "vec2.h": "c",
+        "sdl_image.h": "c"
     }
 }

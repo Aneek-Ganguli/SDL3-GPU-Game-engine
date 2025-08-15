@@ -19,7 +19,8 @@
             "compilerArgs": [
                 "-IC:\\DEV\\SDL\\SDL3\\SDL3 VC\\include",
                 "-I${workspaceFolder}/include",
-                "-IC:\\DEV\\SDL\\SDL_image\\SDL3_image VC\\include"
+                "-IC:\\DEV\\SDL\\SDL_image\\SDL3_image VC\\include",
+                "-IC:\\Program Files\\Assimp\\include"
             ]
         }
     ],

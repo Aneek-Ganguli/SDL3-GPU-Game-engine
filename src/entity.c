@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <SDL3/SDL.h>
+// #define CGLTF_IMPLEMENTATION
+// #include <cgltf/cgltf.h>
+
 #include "Window.h"
 #include "Entity.h"
 #include "VertexData.h"
+
 
 void createEntity(struct VertexData *vertexData, size_t vertices_count,
                   Uint32 *indices, size_t indices_count,
@@ -121,4 +125,82 @@ void drawEntity(struct UBO* ubo, size_t uboSize, struct Window* window, struct E
 
     SDL_BindGPUFragmentSamplers(window->renderPass, 0, &e->textureSamplerBinding, 1);
     SDL_DrawGPUIndexedPrimitives(window->renderPass, (Uint32)e->indiciesCount, 1, 0, 0, 0);
+}
+
+VertexData* load_model_c(
+    const char* path,
+    unsigned int** out_indices,
+    unsigned int* out_vertex_count,
+    unsigned int* out_index_count
+) {
+    const struct aiScene* scene = aiImportFile(
+        path,
+        aiProcess_Triangulate | aiProcess_FlipUVs
+    );
+
+    if (!scene) {
+        printf("ERROR::ASSIMP::%s\n", aiGetErrorString());
+        *out_vertex_count = 0;
+        *out_index_count = 0;
+        return NULL;
+    }
+
+    unsigned int totalVertices = 0;
+    unsigned int totalIndices = 0;
+
+    // Count total vertices and indices
+    for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
+        const struct aiMesh* mesh = scene->mMeshes[i];
+        totalVertices += mesh->mNumVertices;
+        for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
+            totalIndices += mesh->mFaces[j].mNumIndices;
+        }
+    }
+
+    VertexData* vertices = malloc(sizeof(VertexData) * totalVertices);
+    *out_indices = malloc(sizeof(unsigned int) * totalIndices);
+
+    unsigned int vertexOffset = 0;
+    unsigned int indexOffset = 0;
+
+    // Fill vertex and index data
+    for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
+        const struct aiMesh* mesh = scene->mMeshes[i];
+
+        // Vertices
+        for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
+            vertices[vertexOffset + j].position[0] = mesh->mVertices[j].x;
+            vertices[vertexOffset + j].position[1] = mesh->mVertices[j].y;
+            vertices[vertexOffset + j].position[2] = mesh->mVertices[j].z;
+
+            if (mesh->mTextureCoords[0]) {
+                vertices[vertexOffset + j].texCoords[0] = mesh->mTextureCoords[0][j].x;
+                vertices[vertexOffset + j].texCoords[1] = mesh->mTextureCoords[0][j].y;
+            } else {
+                vertices[vertexOffset + j].texCoords[0] = 0.0f;
+                vertices[vertexOffset + j].texCoords[1] = 0.0f;
+            }
+
+            vertices[vertexOffset + j].color.r = 1.0f;
+            vertices[vertexOffset + j].color.g = 1.0f;
+            vertices[vertexOffset + j].color.b = 1.0f;
+            vertices[vertexOffset + j].color.a = 1.0f;
+        }
+
+        // Indices
+        for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
+            const struct aiFace* face = &mesh->mFaces[j];
+            for (unsigned int k = 0; k < face->mNumIndices; k++) {
+                (*out_indices)[indexOffset++] = face->mIndices[k] + vertexOffset;
+            }
+        }
+
+        vertexOffset += mesh->mNumVertices;
+    }
+
+    *out_vertex_count = totalVertices;
+    *out_index_count = totalIndices;
+
+    aiReleaseImport(scene);
+    return vertices;
 }

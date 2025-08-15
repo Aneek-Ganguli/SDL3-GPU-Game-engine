@@ -2,6 +2,10 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <cglm/cglm.h>
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include "Window.h"
 #include "VertexData.h"
 
@@ -296,3 +300,4 @@ SDL_GPUSampler* createGPUSampler(Window* window){
 void uploadTexture(SDL_GPUTextureTransferInfo textureTransferInfo,SDL_GPUTextureRegion textureRegion,Window* window){
     SDL_UploadToGPUTexture(window->copyPass,&textureTransferInfo,&textureRegion,false);
 }
+

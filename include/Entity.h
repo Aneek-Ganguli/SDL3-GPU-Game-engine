@@ -1,6 +1,11 @@
 #pragma once
 #include <stdio.h>
 #include <SDL3/SDL.h>
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+// #define CGLTF_IMPLEMENTATION
+// #include <cgltf/cgltf.h>
 
 #include "Window.h"
 #include "VertexData.h"
@@ -33,3 +38,11 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
                   size_t indicies_count, const char* fileName,struct Window *window, struct Entity *e);
 
 void drawEntity(struct UBO *ubo, size_t size, struct Window *window, Entity *e);
+
+
+VertexData* load_model_c(
+    const char* path,
+    unsigned int** out_indices,
+    unsigned int* out_vertex_count,
+    unsigned int* out_index_count
+);

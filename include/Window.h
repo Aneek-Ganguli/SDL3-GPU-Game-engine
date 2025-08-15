@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <SDL3/SDL.h>
 #include <cglm/cglm.h>
+// #define CGLTF_IMPLEMENTATION
+// #include <cgltf/cgltf.h>
 
 #include "VertexData.h"
 

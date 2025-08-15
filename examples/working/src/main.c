@@ -2,6 +2,11 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <cglm/cglm.h>
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+// #define CGLTF_IMPLEMENTATION
+// #include <cgltf/cgltf.h>
 
 #include "Window.h"
 #include "Entity.h"
@@ -14,8 +19,6 @@ int main(void)
         return -1;
     }
     // IMG_Init(IMG_INIT_PNG);
-
-    
 
     struct Window window = createWindow();
 
@@ -31,17 +34,19 @@ int main(void)
     SDL_GetWindowSize(window.window, &width, &height);
 
     // Positions + UVs; colors are ignored by the shaders above.
-    struct VertexData vertices[] = {
-        {{-0.5f,  0.5f, 0.0f}, {1, 0}, {1,1,1,1}},
-        {{ 0.5f,  0.5f, 0.0f}, {0, 0}, {1,1,1,1}},
-        {{-0.5f, -0.5f, 0.0f}, {1, 1}, {1,1,1,1}},
-        {{ 0.5f, -0.5f, 0.0f}, {0, 1}, {1,1,1,1}},
-    };
-    Uint32 indices[] = {0,1,2, 2,1,3};
+    // struct VertexData vertices[] = {
+    //     {{-0.5f,  0.5f, 0.0f}, {1, 0}, {1,1,1,1}},
+    //     {{ 0.5f,  0.5f, 0.0f}, {0, 0}, {1,1,1,1}},
+    //     {{-0.5f, -0.5f, 0.0f}, {1, 1}, {1,1,1,1}},
+    //     {{ 0.5f, -0.5f, 0.0f}, {0, 1}, {1,1,1,1}},
+    // };
+    Uint32* indices; //= {0,1,2, 2,1,3};
+    unsigned int verticiesNum, indiciesNum;
+    VertexData* verticies = load_model_c("../bin/res/viking_room.obj",&indices,&verticiesNum,&indiciesNum);
 
     startCopyPass(&window);
     struct Entity ent;
-    createEntity(vertices, 4, indices, 6, "res/math.png", &window, &ent);
+    createEntity(verticies, verticiesNum, indices, indiciesNum, "res/viking_room.png", &window, &ent);
     endCopyPass(&window);
 
     mat4 P;
@@ -59,6 +64,8 @@ int main(void)
         float dt = (float)(now - last) / SDL_GetPerformanceFrequency();
         last = now;
         rot += glm_rad(60.0f) * dt;
+
+        printf("Frame Time: %f\n",dt);
 
         mat4 M;
         glm_mat4_identity(M);
