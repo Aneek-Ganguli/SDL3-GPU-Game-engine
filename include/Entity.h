@@ -40,9 +40,12 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
 void drawEntity(struct UBO *ubo, size_t size, struct Window *window, Entity *e);
 
 
-VertexData* load_model_c(
+
+VertexData* load_model(
     const char* path,
     unsigned int** out_indices,
     unsigned int* out_vertex_count,
-    unsigned int* out_index_count
+    unsigned int* out_index_count,
+    float scale // <-- new parameter
 );
+

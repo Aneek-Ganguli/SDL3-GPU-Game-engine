@@ -127,15 +127,16 @@ void drawEntity(struct UBO* ubo, size_t uboSize, struct Window* window, struct E
     SDL_DrawGPUIndexedPrimitives(window->renderPass, (Uint32)e->indiciesCount, 1, 0, 0, 0);
 }
 
-VertexData* load_model_c(
+VertexData* load_model(
     const char* path,
     unsigned int** out_indices,
     unsigned int* out_vertex_count,
-    unsigned int* out_index_count
+    unsigned int* out_index_count,
+    float scale // <-- new parameter
 ) {
     const struct aiScene* scene = aiImportFile(
         path,
-        aiProcess_Triangulate | aiProcess_FlipUVs
+        aiProcess_Triangulate | aiProcess_FlipUVs 
     );
 
     if (!scene) {
@@ -148,7 +149,7 @@ VertexData* load_model_c(
     unsigned int totalVertices = 0;
     unsigned int totalIndices = 0;
 
-    // Count total vertices and indices
+    // Count
     for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
         const struct aiMesh* mesh = scene->mMeshes[i];
         totalVertices += mesh->mNumVertices;
@@ -163,15 +164,15 @@ VertexData* load_model_c(
     unsigned int vertexOffset = 0;
     unsigned int indexOffset = 0;
 
-    // Fill vertex and index data
+    // Fill data
     for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
         const struct aiMesh* mesh = scene->mMeshes[i];
 
         // Vertices
         for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
-            vertices[vertexOffset + j].position[0] = mesh->mVertices[j].x;
-            vertices[vertexOffset + j].position[1] = mesh->mVertices[j].y;
-            vertices[vertexOffset + j].position[2] = mesh->mVertices[j].z;
+            vertices[vertexOffset + j].position[0] = mesh->mVertices[j].x * scale;
+            vertices[vertexOffset + j].position[1] = mesh->mVertices[j].y * scale;
+            vertices[vertexOffset + j].position[2] = mesh->mVertices[j].z * scale;
 
             if (mesh->mTextureCoords[0]) {
                 vertices[vertexOffset + j].texCoords[0] = mesh->mTextureCoords[0][j].x;
@@ -204,3 +205,4 @@ VertexData* load_model_c(
     aiReleaseImport(scene);
     return vertices;
 }
+

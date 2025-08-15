@@ -42,7 +42,7 @@ int main(void)
     // };
     Uint32* indices; //= {0,1,2, 2,1,3};
     unsigned int verticiesNum, indiciesNum;
-    VertexData* verticies = load_model_c("../bin/res/viking_room.obj",&indices,&verticiesNum,&indiciesNum);
+    VertexData* verticies = load_model("../bin/res/viking_room.obj",&indices,&verticiesNum,&indiciesNum,1);
 
     startCopyPass(&window);
     struct Entity ent;
@@ -52,25 +52,41 @@ int main(void)
     mat4 P;
     glm_perspective(glm_rad(70.0f), (float)width/height, 0.1f, 1000.0f, P);
 
+    // mat4 M;  
+    // glm_mat4_identity(M);
+    // glm_translate(M, (vec3){0.0f, 0.0f, -3.0f});
+    // glm_rotate(M, 20, (vec3){0f, 1.0f, 0.0f});
+
     Uint64 last = SDL_GetPerformanceCounter();
     float rot = 0.0f;
 
     bool running = true;
+    SDL_Event event;
     while (running) {
-        SDL_Event ev;
-        while (SDL_PollEvent(&ev)) if (ev.type == SDL_EVENT_QUIT) running = false;
-
         Uint64 now = SDL_GetPerformanceCounter();
         float dt = (float)(now - last) / SDL_GetPerformanceFrequency();
         last = now;
+        mat4 M;
+        glm_mat4_identity(M);
+        while (SDL_PollEvent(&event)){
+            if (event.type == SDL_EVENT_QUIT){
+                running = false;
+            }
+
+            if(event.key.scancode == SDL_SCANCODE_W ){
+                
+            }
+        }
+
+        
         rot += glm_rad(60.0f) * dt;
 
         printf("Frame Time: %f\n",dt);
 
-        mat4 M;
-        glm_mat4_identity(M);
-        glm_translate(M, (vec3){0.0f, 0.0f, -3.0f});
+        
+        glm_translate(M, (vec3){0.0f, -1.0f, -3.0f});
         glm_rotate(M, rot, (vec3){0.0f, 1.0f, 0.0f});
+        glm_rotate_x(M, glm_rad(-90.0f), M);
 
         struct UBO ubo;
         glm_mat4_mul(P, M, ubo.mvp);
