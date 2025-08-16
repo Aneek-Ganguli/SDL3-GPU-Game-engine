@@ -3,23 +3,23 @@
 #include <SDL3/SDL.h>
 // #define CGLTF_IMPLEMENTATION
 // #include <cgltf/cgltf.h>
+#include <cglm/cglm.h>  
 
 #include "Window.h"
 #include "Entity.h"
 #include "VertexData.h"
 
 
-void createEntity(struct VertexData *vertexData, size_t vertices_count,
-                  Uint32 *indices, size_t indices_count,
-                  const char* fileName, struct Window *window, struct Entity *e){
+void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 *indicies,
+                  size_t indicies_count, const char* fileName,vec3 position,struct Window *window, struct Entity *e){
     // Reset everything
     *e = (struct Entity){0};
 
-    const Uint32 vertexSize = (Uint32)(sizeof(struct VertexData) * vertices_count);
-    const Uint32 indexSize  = (Uint32)(sizeof(Uint32) * indices_count);
+    const Uint32 vertexSize = (Uint32)(sizeof(struct VertexData) * verticies_count);
+    const Uint32 indexSize  = (Uint32)(sizeof(Uint32) * indicies_count);
 
-    e->verticiesCount = vertices_count;
-    e->indiciesCount  = indices_count;
+    e->verticiesCount = verticies_count;
+    e->indiciesCount  = indicies_count;
 
     // --- GPU buffers ---
     e->vertexBuffer = createBuffer(vertexSize, SDL_GPU_BUFFERUSAGE_VERTEX, window);
@@ -42,7 +42,7 @@ void createEntity(struct VertexData *vertexData, size_t vertices_count,
         return;
     }
     memcpy(transferMem, vertexData, vertexSize);
-    memcpy((char*)transferMem + vertexSize, indices, indexSize);
+    memcpy((char*)transferMem + vertexSize, indicies, indexSize);
     SDL_UnmapGPUTransferBuffer(window->device, e->transferBuffer);
 
     e->vertexTransferBufferLocation = createTransferBufferLocation(e->transferBuffer, 0);
@@ -112,18 +112,46 @@ void createEntity(struct VertexData *vertexData, size_t vertices_count,
 
     // printf("Entity ready: %zu verts, %zu indices, texture %dx%d\n",
         //    vertices_count, indices_count, e->surface->w, e->surface->h);
+    // e->position = position;
+    // glm_vec3_copy(position,*e->position);
+    e->position[0] =  position[0];
+    e->position[1] =  position[1];
+    e->position[2] =  position[2];
 }
 
-void drawEntity(struct UBO* ubo, size_t uboSize, struct Window* window, struct Entity* e){
+void print_mat4(mat4 m) {
+    for (int i = 0; i < 4; i++) {
+        printf("| ");
+        for (int j = 0; j < 4; j++) {
+            printf("%8.3f ", m[i][j]);
+        }
+        printf("|\n");
+    }
+    printf("\n");
+}
+
+void drawEntity(struct Window* window, struct Entity* e) {
+    mat4 M;
+    glm_mat4_identity(M);
+
+    // now position is a vec3 (float[3]) so this works fine
+    glm_translate(M, e->position);
+
+    // multiply P * M -> MVP
+    glm_mat4_mul(window->P, M, e->uboPosition.mvp);
+
+    // debug print
+    // print_mat4(e->uboPosition.mvp);
+
     SDL_BindGPUVertexBuffers(window->renderPass, 0, &e->vertexBufferBinding, 1);
     SDL_BindGPUIndexBuffer(window->renderPass, &e->indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
 
-    // Push the actual UBO bytes (ubo is already a pointer)
-    SDL_PushGPUVertexUniformData(window->commandBuffer, 0, ubo, (Uint32)uboSize);
+    SDL_PushGPUVertexUniformData(window->commandBuffer, 0, &e->uboPosition, sizeof(e->uboPosition));
 
     SDL_BindGPUFragmentSamplers(window->renderPass, 0, &e->textureSamplerBinding, 1);
     SDL_DrawGPUIndexedPrimitives(window->renderPass, (Uint32)e->indiciesCount, 1, 0, 0, 0);
 }
+
 
 VertexData* load_model(
     const char* path,
@@ -203,4 +231,6 @@ VertexData* load_model(
     aiReleaseImport(scene);
     return vertices;
 }
+
+void createEntityWithModel(const char* modelFileName,const char* textureFileName,Window* window, Entity* entity);
 

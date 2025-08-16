@@ -21,6 +21,8 @@ typedef struct Window{
     SDL_GPUShader *fragmentShader;
     SDL_GPUCopyPass *copyPass;
     SDL_GPUSampler* sampler;
+    int width,height;
+    mat4 P;
 } Window;
 
 struct Window createWindow(const char* title,int width,int height);

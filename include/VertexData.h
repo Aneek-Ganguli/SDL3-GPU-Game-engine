@@ -10,8 +10,14 @@ typedef struct VertexData {
     SDL_FColor color;
 }VertexData;
 
-struct UBO {
+typedef struct UBO {
 	mat4 mvp;
-};
+} UBO;
+
+typedef struct Transform {
+    vec3 position;
+    vec3 rotation; // radians
+    vec3 scale;
+} Transform;
 
 vec2* normalize(float x, float y);

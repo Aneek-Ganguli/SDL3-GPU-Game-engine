@@ -19,11 +19,11 @@ int main(void){
     }
     // IMG_Init(IMG_INIT_PNG);
 
-    struct Window window = createWindow("Version 1.0.0");
+    struct Window window = createWindow("Version 1.0.0",800,600);
 
-    SDL_GPUShader* vert = load_shader(window.device, "../bin/shader/shader.spv.vert",
+    SDL_GPUShader* vert = load_shader(&window, "../bin/shader/shader.spv.vert",
         SDL_GPU_SHADERSTAGE_VERTEX, 0, 1, 0, 0);
-    SDL_GPUShader* frag = load_shader(window.device, "../bin/shader/shader.spv.frag",
+    SDL_GPUShader* frag = load_shader(&window, "../bin/shader/shader.spv.frag",
         SDL_GPU_SHADERSTAGE_FRAGMENT, 1, 0, 0, 0);
 
     // IMPORTANT: pipeline’s vertex layout must match the struct we use below.
@@ -45,7 +45,9 @@ int main(void){
 
     startCopyPass(&window);
     struct Entity ent;
-    createEntity(verticies, verticiesNum, indices, indiciesNum, "res/viking_room.png", &window, &ent);
+
+    //createEntity(verticies, verticiesNum, indices, indiciesNum, "res/viking_room.png", (vec3){1,1,1},&window, &ent);
+    createEntity(verticies,verticiesNum,indices,(size_t)indiciesNum,"res/viking_room.png",(vec3){1,1,-3},&window,&ent);
     endCopyPass(&window);
 
     mat4 P;
@@ -80,7 +82,7 @@ int main(void){
         
         rot += glm_rad(60.0f) * dt;
 
-        printf("Frame Time: %f\n",dt);
+        // printf("Frame Time: %f\n",dt);
 
         
         glm_translate(M, (vec3){0.0f, -1.0f, -3.0f});
@@ -91,7 +93,7 @@ int main(void){
         glm_mat4_mul(P, M, ubo.mvp);
 
         newFrame(&window);
-        drawEntity(&ubo, sizeof(ubo), &window, &ent);
+        drawEntity(&window, &ent);
         endFrame(&window);
     }
 

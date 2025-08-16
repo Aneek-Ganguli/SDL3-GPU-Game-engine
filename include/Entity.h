@@ -32,12 +32,16 @@ typedef struct Entity
     SDL_GPUTextureTransferInfo textureTransferInfo;
     SDL_GPUTextureRegion textureRegion;
     SDL_GPUTextureSamplerBinding textureSamplerBinding;
+    vec3 position;
+    UBO uboPosition;
 } Entity;
 
 void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 *indicies,
-                  size_t indicies_count, const char* fileName,struct Window *window, struct Entity *e);
+                  size_t indicies_count, const char* fileName,vec3 position,struct Window *window, struct Entity *e);
 
-void drawEntity(struct UBO *ubo, size_t size, struct Window *window, Entity *e);
+void createEntityWithModel(const char* modelFileName,const char* textureFileName,Window* window, Entity* entity);
+
+void drawEntity(struct Window *window, Entity *e);
 
 
 

@@ -77,10 +77,15 @@ struct Window  createWindow(const char* title,int width,int height){
 
     path = SDL_GetBasePath();
 
+    // mat4 *P;
+    // glm_perspective(glm_rad(70.0f), (float)width/height, 0.1f, 1000.0f, P);
+
     return (struct Window){
-            .window = s_window,
-            .device = s_device
-        };
+        .window = s_window,
+        .device = s_device,
+        .width = width,
+        .height = height,
+    };
 }
 
 void newFrame(struct Window *window){
@@ -241,6 +246,8 @@ void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Windo
     }
 
     window->sampler = createGPUSampler(window);
+
+    glm_perspective(glm_rad(70.0f), (float)window->width/window->height, 0.1f, 1000.0f, window->P);
 }
 
 SDL_Surface* loadImage(const char* imageFilename, int desiredChannels){
