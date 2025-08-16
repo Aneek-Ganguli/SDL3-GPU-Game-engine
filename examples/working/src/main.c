@@ -47,7 +47,7 @@ int main(void){
     struct Entity ent;
 
     //createEntity(verticies, verticiesNum, indices, indiciesNum, "res/viking_room.png", (vec3){1,1,1},&window, &ent);
-    createEntity(verticies,verticiesNum,indices,(size_t)indiciesNum,"res/viking_room.png",(vec3){1,1,-3},&window,&ent);
+    createEntity(verticies,verticiesNum,indices,(size_t)indiciesNum,"res/viking_room.png",(vec3){0,1,-3},&window,&ent);
     endCopyPass(&window);
 
     mat4 P;
@@ -72,10 +72,6 @@ int main(void){
         while (SDL_PollEvent(&event)){
             if (event.type == SDL_EVENT_QUIT){
                 running = false;
-            }
-
-            if(event.key.scancode == SDL_SCANCODE_W ){
-                
             }
         }
 
