@@ -6,3 +6,5 @@ errors.txt
 include/cglm/*
 include/stb/*   
 include/cgltf/*
+*.o
+build.bat

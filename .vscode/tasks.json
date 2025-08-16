@@ -3,7 +3,7 @@
         {
             "type": "cppbuild",
             "label": "C/C++: gcc.exe build active file",
-            "command": "C:\\Users\\Reall\\AppData\\Local\\Microsoft\\WinGet\\Packages\\MartinStorsjo.LLVM-MinGW.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\llvm-mingw-20250613-ucrt-x86_64\\bin\\gcc.exe",
+            "command": "C:\\w64devkit\\bin\\gcc.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
@@ -37,7 +37,7 @@
         {
             "type": "cppbuild",
             "label": "Working",
-            "command": "C:\\Users\\Reall\\AppData\\Local\\Microsoft\\WinGet\\Packages\\MartinStorsjo.LLVM-MinGW.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\llvm-mingw-20250613-ucrt-x86_64\\bin\\gcc.exe",
+            "command": "C:\\w64devkit\\bin\\gcc.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
@@ -74,7 +74,7 @@
         {
             "type": "cppbuild",
             "label": "Window",
-            "command": "C:\\Users\\Reall\\AppData\\Local\\Microsoft\\WinGet\\Packages\\MartinStorsjo.LLVM-MinGW.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\llvm-mingw-20250613-ucrt-x86_64\\bin\\gcc.exe",
+            "command": "C:\\w64devkit\\bin\\gcc.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
