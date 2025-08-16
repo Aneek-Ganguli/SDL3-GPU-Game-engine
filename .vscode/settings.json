@@ -1,5 +1,5 @@
 {
-    "cmake.sourceDirectory": "C:/Users/Reall/Desktop/SDL3 GPU c",
+    "cmake.sourceDirectory": "C:/Users/Reall/Desktop/SDL3 GPU c/include/cglm",
     "files.associations": {
         "window.h": "c",
         "cglm.h": "c",

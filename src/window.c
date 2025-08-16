@@ -60,9 +60,9 @@ SDL_GPUShader* load_shader(
     return shader;
 }
 
-struct Window  createWindow(){
+struct Window  createWindow(const char* title){
     struct SDL_Window* s_window = NULL;
-    s_window = SDL_CreateWindow("It works",800,600,SDL_WINDOW_VULKAN);
+    s_window = SDL_CreateWindow(title,800,600,SDL_WINDOW_VULKAN);
     if(s_window == NULL){
         printf("Error creating window: %s\n",SDL_GetError());
     }
