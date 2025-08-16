@@ -12,8 +12,7 @@
 #include "Entity.h"
 #include "VertexData.h"
 
-int main(void)
-{
+int main(void){
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         printf("SDL_Init failed: %s\n", SDL_GetError());
         return -1;

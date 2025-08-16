@@ -9,8 +9,7 @@
 
 static const char* path = NULL;
 
-typedef struct Window
-{
+typedef struct Window{
     SDL_Window *window;
     SDL_GPUDevice *device;
     SDL_GPUCommandBuffer *commandBuffer;

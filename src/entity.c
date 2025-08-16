@@ -11,8 +11,7 @@
 
 void createEntity(struct VertexData *vertexData, size_t vertices_count,
                   Uint32 *indices, size_t indices_count,
-                  const char* fileName, struct Window *window, struct Entity *e)
-{
+                  const char* fileName, struct Window *window, struct Entity *e){
     // Reset everything
     *e = (struct Entity){0};
 
@@ -111,12 +110,11 @@ void createEntity(struct VertexData *vertexData, size_t vertices_count,
     e->vertexBufferBinding = createBufferBinding(e->vertexBuffer);
     e->indexBufferBinding  = createBufferBinding(e->indexBuffer);
 
-    printf("Entity ready: %zu verts, %zu indices, texture %dx%d\n",
-           vertices_count, indices_count, e->surface->w, e->surface->h);
+    // printf("Entity ready: %zu verts, %zu indices, texture %dx%d\n",
+        //    vertices_count, indices_count, e->surface->w, e->surface->h);
 }
 
-void drawEntity(struct UBO* ubo, size_t uboSize, struct Window* window, struct Entity* e)
-{
+void drawEntity(struct UBO* ubo, size_t uboSize, struct Window* window, struct Entity* e){
     SDL_BindGPUVertexBuffers(window->renderPass, 0, &e->vertexBufferBinding, 1);
     SDL_BindGPUIndexBuffer(window->renderPass, &e->indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
 
