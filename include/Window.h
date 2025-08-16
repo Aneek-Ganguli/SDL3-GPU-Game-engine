@@ -23,11 +23,11 @@ typedef struct Window{
     SDL_GPUSampler* sampler;
 } Window;
 
-struct Window createWindow(const char* title);
+struct Window createWindow(const char* title,int width,int height);
 void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Window* window);
 void newFrame(struct Window *window);
 void endFrame(struct Window *window);
-SDL_GPUShader *load_shader(SDL_GPUDevice *device, const char *filename, SDL_GPUShaderStage stage,
+SDL_GPUShader *load_shader(Window* window, const char *filename, SDL_GPUShaderStage stage,
                            Uint32 sampler_count, Uint32 uniform_buffer_count, Uint32 storage_buffer_count,
                            Uint32 storage_texture_count);
 SDL_GPUBuffer *createBuffer(Uint32 size, SDL_GPUBufferUsageFlags usage, struct Window *window);

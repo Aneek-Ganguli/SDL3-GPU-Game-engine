@@ -10,7 +10,7 @@
 #include "VertexData.h"
 
 SDL_GPUShader* load_shader(
-    SDL_GPUDevice* device,
+    Window* window,
     const char* filename,
     SDL_GPUShaderStage stage,
     Uint32 sampler_count,
@@ -24,7 +24,7 @@ SDL_GPUShader* load_shader(
     }
 
     const char* entrypoint;
-    SDL_GPUShaderFormat backend_formats = SDL_GetGPUShaderFormats(device);
+    SDL_GPUShaderFormat backend_formats = SDL_GetGPUShaderFormats(window->device);
     SDL_GPUShaderFormat format = SDL_GPU_SHADERFORMAT_INVALID;
     if (backend_formats & SDL_GPU_SHADERFORMAT_SPIRV) {
         format = SDL_GPU_SHADERFORMAT_SPIRV;
@@ -49,7 +49,7 @@ SDL_GPUShader* load_shader(
     shader_info.num_storage_buffers = storage_buffer_count;
     shader_info.num_storage_textures = storage_texture_count;
 
-    SDL_GPUShader* shader = SDL_CreateGPUShader(device, &shader_info);
+    SDL_GPUShader* shader = SDL_CreateGPUShader(window->device, &shader_info);
 
     if (shader == NULL) {
         fprintf(stderr, "ERROR: SDL_CreateGPUShader failed: %s\n", SDL_GetError());
@@ -60,9 +60,9 @@ SDL_GPUShader* load_shader(
     return shader;
 }
 
-struct Window  createWindow(const char* title){
+struct Window  createWindow(const char* title,int width,int height){
     struct SDL_Window* s_window = NULL;
-    s_window = SDL_CreateWindow(title,800,600,SDL_WINDOW_VULKAN);
+    s_window = SDL_CreateWindow(title,width,height,SDL_WINDOW_VULKAN);
     if(s_window == NULL){
         printf("Error creating window: %s\n",SDL_GetError());
     }

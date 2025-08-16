@@ -19,7 +19,7 @@ int main(void){
     }
     // IMG_Init(IMG_INIT_PNG);
 
-    struct Window window = createWindow();
+    struct Window window = createWindow("Version 1.0.0");
 
     SDL_GPUShader* vert = load_shader(window.device, "../bin/shader/shader.spv.vert",
         SDL_GPU_SHADERSTAGE_VERTEX, 0, 1, 0, 0);
