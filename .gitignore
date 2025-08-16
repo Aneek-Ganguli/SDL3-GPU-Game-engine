@@ -8,3 +8,4 @@ include/stb/*
 include/cgltf/*
 *.o
 build.bat
+*.a
