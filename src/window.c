@@ -61,6 +61,9 @@ SDL_GPUShader* load_shader(
 }
 
 struct Window  createWindow(const char* title,int width,int height){
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        printf("SDL_Init failed: %s\n", SDL_GetError());
+    }
     struct SDL_Window* s_window = NULL;
     s_window = SDL_CreateWindow(title,width,height,SDL_WINDOW_VULKAN);
     if(s_window == NULL){
@@ -162,11 +165,6 @@ SDL_GPUTransferBuffer* createTransferBuffer(Uint32 size,struct Window* window){
     );
 }
 
-void* createTransferMem(SDL_GPUTransferBuffer* transferBuffer,void* data,Uint32 size,struct Window* window){
-    void* vertexMem = SDL_MapGPUTransferBuffer(window->device, transferBuffer,false);
-	memcpy(vertexMem, data, size);
-    return vertexMem;
-}
 
 SDL_GPUTransferBufferLocation createTransferBufferLocation(SDL_GPUTransferBuffer* transferBuffer,Uint32 offset){
     return (SDL_GPUTransferBufferLocation){
@@ -308,3 +306,8 @@ void uploadTexture(SDL_GPUTextureTransferInfo textureTransferInfo,SDL_GPUTexture
     SDL_UploadToGPUTexture(window->copyPass,&textureTransferInfo,&textureRegion,false);
 }
 
+void cleanUp(Window* window){
+    SDL_DestroyGPUDevice(window->device);
+    SDL_DestroyWindow(window->window);
+    SDL_Quit();
+}

@@ -13,10 +13,7 @@
 #include "VertexData.h"
 
 int main(void){
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
-        printf("SDL_Init failed: %s\n", SDL_GetError());
-        return -1;
-    }
+    
     // IMG_Init(IMG_INIT_PNG);
 
     struct Window window = createWindow("Version 1.0.0",800,600);
@@ -47,7 +44,7 @@ int main(void){
     struct Entity ent;
 
     //createEntity(verticies, verticiesNum, indices, indiciesNum, "res/viking_room.png", (vec3){1,1,1},&window, &ent);
-    createEntity(verticies,verticiesNum,indices,(size_t)indiciesNum,"res/viking_room.png",(vec3){0,1,-3},&window,&ent);
+    createEntity(verticies,verticiesNum,indices,(size_t)indiciesNum,"res/viking_room.png",(vec3){0,-1,-3},&window,&ent);
     endCopyPass(&window);
 
     mat4 P;
@@ -93,6 +90,6 @@ int main(void){
         endFrame(&window);
     }
 
-    SDL_Quit();
+    cleanUp(&window);
     return 0;
 }

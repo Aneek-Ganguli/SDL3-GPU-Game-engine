@@ -45,3 +45,4 @@ SDL_Surface* loadImage(const char* imageFilename, int desiredChannels);
 SDL_GPUTexture* createTexture(SDL_Surface* surface,Window* window);
 SDL_GPUSampler* createGPUSampler(Window* window);
 void uploadTexture(SDL_GPUTextureTransferInfo textureTransferInfo,SDL_GPUTextureRegion textureRegion,Window* window);
+void cleanUp(Window* window);
