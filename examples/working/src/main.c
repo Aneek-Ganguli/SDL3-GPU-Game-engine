@@ -18,13 +18,14 @@ int main(void){
 
     struct Window window = createWindow("Version 1.0.0",800,600);
 
-    SDL_GPUShader* vert = load_shader(&window, "../bin/shader/shader.spv.vert",
+    window.vertexShader = load_shader(&window, "../bin/shader/shader.spv.vert",
         SDL_GPU_SHADERSTAGE_VERTEX, 0, 1, 0, 0);
-    SDL_GPUShader* frag = load_shader(&window, "../bin/shader/shader.spv.frag",
+
+    window.fragmentShader = load_shader(&window, "../bin/shader/shader.spv.frag",
         SDL_GPU_SHADERSTAGE_FRAGMENT, 1, 0, 0, 0);
 
     // IMPORTANT: pipeline’s vertex layout must match the struct we use below.
-    setShader(vert, frag, &window);
+    setShader( &window);
 
     int width, height;
     SDL_GetWindowSize(window.window, &width, &height);
@@ -90,6 +91,7 @@ int main(void){
         endFrame(&window);
     }
 
+    destroyEntity(&ent,&window);
     cleanUp(&window);
     return 0;
 }

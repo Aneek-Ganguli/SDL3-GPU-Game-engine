@@ -39,11 +39,11 @@ typedef struct Entity
 void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 *indicies,
                   size_t indicies_count, const char* fileName,vec3 position,struct Window *window, struct Entity *e);
 
-void createEntityWithModel(const char* modelFileName,const char* textureFileName,Window* window, Entity* entity);
+void createEntityWithModel(const char* modelFileName,const char* textureFileName,float scale,vec3 position,Window* window, Entity* entity);
 
 void drawEntity(struct Window *window, Entity *e);
 
-
+void destroyEntity(Entity* e,Window* window);
 
 VertexData* load_model(
     const char* path,

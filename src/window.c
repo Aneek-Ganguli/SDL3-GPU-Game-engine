@@ -192,7 +192,7 @@ SDL_GPUBufferBinding createBufferBinding(SDL_GPUBuffer* buffer){
     };
 }
 
-void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Window* window){
+void setShader(Window* window){
 
     SDL_GPUVertexInputState vertexInput = (SDL_GPUVertexInputState){
                 .num_vertex_buffers = 1,
@@ -235,8 +235,8 @@ void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Windo
                 }
             },
             .vertex_input_state = vertexInput,
-            .vertex_shader = vertexShader,
-            .fragment_shader = fragmentShader
+            .vertex_shader = window->vertexShader,
+            .fragment_shader = window->fragmentShader
         }
     );
     if(window->pipeline == NULL){
@@ -307,6 +307,10 @@ void uploadTexture(SDL_GPUTextureTransferInfo textureTransferInfo,SDL_GPUTexture
 }
 
 void cleanUp(Window* window){
+    SDL_ReleaseGPUShader(window->device,window->vertexShader);
+    SDL_ReleaseGPUShader(window->device,window->fragmentShader);
+    SDL_ReleaseGPUGraphicsPipeline(window->device,window->pipeline);
+    SDL_ReleaseGPUSampler(window->device,window->sampler);
     SDL_DestroyGPUDevice(window->device);
     SDL_DestroyWindow(window->window);
     SDL_Quit();

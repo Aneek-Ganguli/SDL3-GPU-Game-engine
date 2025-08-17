@@ -26,7 +26,7 @@ typedef struct Window{
 } Window;
 
 struct Window createWindow(const char* title,int width,int height);
-void setShader(SDL_GPUShader *vertexShader, SDL_GPUShader *fragmentShader, Window* window);
+void setShader(Window* window);
 void newFrame(struct Window *window);
 void endFrame(struct Window *window);
 SDL_GPUShader *load_shader(Window* window, const char *filename, SDL_GPUShaderStage stage,

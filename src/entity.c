@@ -232,5 +232,36 @@ VertexData* load_model(
     return vertices;
 }
 
-void createEntityWithModel(const char* modelFileName,const char* textureFileName,Window* window, Entity* entity);
+void createEntityWithModel(const char* modelFileName,const char* textureFileName,float scale,vec3 position,Window* window, Entity* entity){
+    Uint32* indicies;
+    int vertexNum,indexNum;
+    VertexData* vertexData = load_model(modelFileName,&indicies,&vertexNum,&indexNum,scale);
+    createEntity(vertexData,vertexNum,indicies,indexNum,textureFileName,position,window,entity);
+}
 
+void destroyEntity(Entity* e,Window* window){
+    if (e->vertexBuffer) {
+        SDL_ReleaseGPUBuffer(window->device, e->vertexBuffer);
+        e->vertexBuffer = NULL;
+    }
+    if (e->indexBuffer) {
+        SDL_ReleaseGPUBuffer(window->device, e->indexBuffer);
+        e->indexBuffer = NULL;
+    }
+    if (e->transferBuffer) {
+        SDL_ReleaseGPUTransferBuffer(window->device, e->transferBuffer);
+        e->transferBuffer = NULL;
+    }
+    if (e->textureTransferBuffer) {
+        SDL_ReleaseGPUTransferBuffer(window->device, e->textureTransferBuffer);
+        e->textureTransferBuffer = NULL;
+    }
+    if (e->texture) {
+        SDL_ReleaseGPUTexture(window->device, e->texture);
+        e->texture = NULL;
+    }
+    if (e->surface) {
+        SDL_DestroySurface(e->surface); // assuming SDL_Surface*
+        e->surface = NULL;
+    }
+}
