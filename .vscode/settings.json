@@ -8,6 +8,7 @@
         "vertexdata.h": "c",
         "vec2.h": "c",
         "sdl_image.h": "c",
-        "postprocess.h": "c"
+        "postprocess.h": "c",
+        "component.h": "c"
     }
 }

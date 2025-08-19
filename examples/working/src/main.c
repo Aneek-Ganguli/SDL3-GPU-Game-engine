@@ -10,6 +10,7 @@
 
 #include "Window.h"
 #include "Entity.h"
+#include "Component.h"
 #include "VertexData.h"
 
 int main(void){
@@ -18,25 +19,16 @@ int main(void){
 
     struct Window window = createWindow("Version 1.0.0",800,600);
 
-    window.vertexShader = load_shader(&window, "../bin/shader/shader.spv.vert",
-        SDL_GPU_SHADERSTAGE_VERTEX, 0, 1, 0, 0);
+    window.vertexShader = loadShader(&window, "shader.vert", 0, 1, 0, 0);
 
-    window.fragmentShader = load_shader(&window, "../bin/shader/shader.spv.frag",
-        SDL_GPU_SHADERSTAGE_FRAGMENT, 1, 0, 0, 0);
+    window.fragmentShader = loadShader(&window, "shader.frag", 1, 0, 0, 0);
 
     // IMPORTANT: pipeline’s vertex layout must match the struct we use below.
-    setShader( &window);
+    createGraphicsPipeline( &window,70.0f);
 
     int width, height;
     SDL_GetWindowSize(window.window, &width, &height);
 
-    // Positions + UVs; colors are ignored by the shaders above.
-    // struct VertexData vertices[] = {
-    //     {{-0.5f,  0.5f, 0.0f}, {1, 0}, {1,1,1,1}},
-    //     {{ 0.5f,  0.5f, 0.0f}, {0, 0}, {1,1,1,1}},
-    //     {{-0.5f, -0.5f, 0.0f}, {1, 1}, {1,1,1,1}},
-    //     {{ 0.5f, -0.5f, 0.0f}, {0, 1}, {1,1,1,1}},
-    // };
     Uint32* indices; //= {0,1,2, 2,1,3};
     unsigned int verticiesNum, indiciesNum;
     VertexData* verticies = load_model("../bin/res/viking_room.obj",&indices,&verticiesNum,&indiciesNum,1);
@@ -45,17 +37,14 @@ int main(void){
     struct Entity ent;
 
     //createEntity(verticies, verticiesNum, indices, indiciesNum, "res/viking_room.png", (vec3){1,1,1},&window, &ent);
-    createEntity(verticies,verticiesNum,indices,(size_t)indiciesNum,"res/viking_room.png",(vec3){0,-1,-3},&window,&ent);
+    createEntity(verticies,verticiesNum,indices,(size_t)indiciesNum,"res/viking_room.png",(vec3){0,-1,-3},(vec3){1,1,1},&window,&ent);
     endCopyPass(&window);
 
     mat4 P;
     glm_perspective(glm_rad(70.0f), (float)width/height, 0.1f, 1000.0f, P);
 
-    // mat4 M;  
-    // glm_mat4_identity(M);
-    // glm_translate(M, (vec3){0.0f, 0.0f, -3.0f});
-    // glm_rotate(M, 20, (vec3){0f, 1.0f, 0.0f});
-
+    
+    
     Uint64 last = SDL_GetPerformanceCounter();
     float rot = 0.0f;
 

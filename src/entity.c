@@ -11,7 +11,7 @@
 
 
 void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 *indicies,
-                  size_t indicies_count, const char* fileName,vec3 position,struct Window *window, struct Entity *e){
+                  size_t indicies_count, const char* fileName,vec3 position,vec3 scale,struct Window *window, struct Entity *e){
     // Reset everything
     *e = (struct Entity){0};
 
@@ -114,9 +114,12 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
         //    vertices_count, indices_count, e->surface->w, e->surface->h);
     // e->position = position;
     // glm_vec3_copy(position,*e->position);
-    e->position[0] =  position[0];
-    e->position[1] =  position[1];
-    e->position[2] =  position[2];
+    // e->position[0] =  position[0];
+    // e->position[1] =  position[1];
+    // e->position[2] =  position[2];
+    
+    glm_vec3_copy(position,e->position);
+    glm_vec3_copy(scale,e->scale);
 }
 
 void print_mat4(mat4 m) {
@@ -136,12 +139,10 @@ void drawEntity(struct Window* window, struct Entity* e) {
 
     // now position is a vec3 (float[3]) so this works fine
     glm_translate(M, e->position);
-
+    
+    // glm_scale(M,(vec3){3,1,1});
     // multiply P * M -> MVP
     glm_mat4_mul(window->P, M, e->uboPosition.mvp);
-
-    // debug print
-    // print_mat4(e->uboPosition.mvp);
 
     SDL_BindGPUVertexBuffers(window->renderPass, 0, &e->vertexBufferBinding, 1);
     SDL_BindGPUIndexBuffer(window->renderPass, &e->indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
@@ -232,11 +233,11 @@ VertexData* load_model(
     return vertices;
 }
 
-void createEntityWithModel(const char* modelFileName,const char* textureFileName,float scale,vec3 position,Window* window, Entity* entity){
+void createEntityWithModel(const char* modelFileName,const char* textureFileName,vec3 scale,vec3 position,Window* window, Entity* entity){
     Uint32* indicies;
     int vertexNum,indexNum;
-    VertexData* vertexData = load_model(modelFileName,&indicies,&vertexNum,&indexNum,scale);
-    createEntity(vertexData,vertexNum,indicies,indexNum,textureFileName,position,window,entity);
+    VertexData* vertexData = load_model(modelFileName,&indicies,&vertexNum,&indexNum,1);
+    createEntity(vertexData,vertexNum,indicies,indexNum,textureFileName,position,scale,window,entity);
 }
 
 void destroyEntity(Entity* e,Window* window){
@@ -264,4 +265,8 @@ void destroyEntity(Entity* e,Window* window){
         SDL_DestroySurface(e->surface); // assuming SDL_Surface*
         e->surface = NULL;
     }
+}
+
+void setScale(Entity* e,vec3 scale){
+    glm_vec3_copy(scale,e->scale);
 }

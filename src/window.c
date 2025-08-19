@@ -9,58 +9,84 @@
 #include "Window.h"
 #include "VertexData.h"
 
-SDL_GPUShader* load_shader(
-    Window* window,
-    const char* filename,
-    SDL_GPUShaderStage stage,
-    Uint32 sampler_count,
-    Uint32 uniform_buffer_count,
-    Uint32 storage_buffer_count,
-    Uint32 storage_texture_count) {
+SDL_GPUShader* loadShader(
+	Window* window,
+	const char* shaderFilename,
+	Uint32 samplerCount,
+	Uint32 uniformBufferCount,
+	Uint32 storageBufferCount,
+	Uint32 storageTextureCount
+) {
+	// Auto-detect the shader stage from the file name for convenience
+	SDL_GPUShaderStage stage;
+	if (SDL_strstr(shaderFilename, ".vert"))
+	{
+		stage = SDL_GPU_SHADERSTAGE_VERTEX;
+	}
+	else if (SDL_strstr(shaderFilename, ".frag"))
+	{
+		stage = SDL_GPU_SHADERSTAGE_FRAGMENT;
+	}
+	else
+	{
+		SDL_Log("Invalid shader stage!");
+		return NULL;
+	}
 
-    if (!SDL_GetPathInfo(filename, NULL)) {
-        fprintf(stdout, "File (%s) does not exist.\n", filename);
-        return NULL;
-    }
+	char fullPath[256];
+	SDL_GPUShaderFormat backendFormats = SDL_GetGPUShaderFormats(window->device);
+	SDL_GPUShaderFormat format = SDL_GPU_SHADERFORMAT_INVALID;
+	const char *entrypoint;
 
-    const char* entrypoint;
-    SDL_GPUShaderFormat backend_formats = SDL_GetGPUShaderFormats(window->device);
-    SDL_GPUShaderFormat format = SDL_GPU_SHADERFORMAT_INVALID;
-    if (backend_formats & SDL_GPU_SHADERFORMAT_SPIRV) {
-        format = SDL_GPU_SHADERFORMAT_SPIRV;
-        entrypoint = "main";
-    }
+	if (backendFormats & SDL_GPU_SHADERFORMAT_SPIRV) {
+		SDL_snprintf(fullPath, sizeof(fullPath), "%s/%s.spv","../bin/shader", shaderFilename);
+		format = SDL_GPU_SHADERFORMAT_SPIRV;
+		entrypoint = "main";
+	} else if (backendFormats & SDL_GPU_SHADERFORMAT_MSL) {
+		SDL_snprintf(fullPath, sizeof(fullPath), "%s/%s.msl", "../bin/shader", shaderFilename);
+		format = SDL_GPU_SHADERFORMAT_MSL;
+		entrypoint = "main0";
+	} else if (backendFormats & SDL_GPU_SHADERFORMAT_DXIL) {
+		SDL_snprintf(fullPath, sizeof(fullPath), "%s/%s.dixil","../bin/shader", shaderFilename);
+		format = SDL_GPU_SHADERFORMAT_DXIL;
+		entrypoint = "main";
+	} else {
+		SDL_Log("%s", "Unrecognized backend shader format!");
+		return NULL;
+	}
 
-    size_t code_size;
-    void* code = SDL_LoadFile(filename, &code_size);
-    if (code == NULL) {
-        fprintf(stderr, "ERROR: SDL_LoadFile(%s) failed: %s\n", filename, SDL_GetError());
-        return NULL;
-    }
+	size_t codeSize;
+	void* code = SDL_LoadFile(fullPath, &codeSize);
+	if (code == NULL)
+	{
+		SDL_Log("Failed to load shader from disk! %s", fullPath);
+		return NULL;
+	}
 
-    SDL_GPUShaderCreateInfo shader_info;
-    shader_info.code = (const Uint8*)code;
-    shader_info.code_size = code_size;
-    shader_info.entrypoint = entrypoint;
-    shader_info.format = format;
-    shader_info.stage = stage;
-    shader_info.num_samplers = sampler_count;
-    shader_info.num_uniform_buffers = uniform_buffer_count;
-    shader_info.num_storage_buffers = storage_buffer_count;
-    shader_info.num_storage_textures = storage_texture_count;
+	SDL_GPUShaderCreateInfo shaderInfo = {
+		.code = code,
+		.code_size = codeSize,
+		.entrypoint = entrypoint,
+		.format = format,
+		.stage = stage,
+		.num_samplers = samplerCount,
+		.num_uniform_buffers = uniformBufferCount,
+		.num_storage_buffers = storageBufferCount,
+		.num_storage_textures = storageTextureCount
+	};
+	SDL_GPUShader* shader = SDL_CreateGPUShader(window->device, &shaderInfo);
+	if (shader == NULL)
+	{
+		SDL_Log("Failed to create shader!");
+		SDL_free(code);
+		return NULL;
+	}
 
-    SDL_GPUShader* shader = SDL_CreateGPUShader(window->device, &shader_info);
-
-    if (shader == NULL) {
-        fprintf(stderr, "ERROR: SDL_CreateGPUShader failed: %s\n", SDL_GetError());
-        SDL_free(code);
-        return NULL;
-    }
-    SDL_free(code);
-    return shader;
+	SDL_free(code);
+	return shader;
 }
 
-struct Window  createWindow(const char* title,int width,int height){
+struct Window createWindow(const char* title,int width,int height){
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         printf("SDL_Init failed: %s\n", SDL_GetError());
     }
@@ -192,8 +218,7 @@ SDL_GPUBufferBinding createBufferBinding(SDL_GPUBuffer* buffer){
     };
 }
 
-void setShader(Window* window){
-
+void createGraphicsPipeline(Window* window,float Fov){
     SDL_GPUVertexInputState vertexInput = (SDL_GPUVertexInputState){
                 .num_vertex_buffers = 1,
                 .num_vertex_attributes = 3,
@@ -244,8 +269,12 @@ void setShader(Window* window){
     }
 
     window->sampler = createGPUSampler(window);
+    window->fov = Fov;
+    windowWidth = window->width;
+    windowHeight = window->height;
+    fov = window->fov;
 
-    glm_perspective(glm_rad(70.0f), (float)window->width/window->height, 0.1f, 1000.0f, window->P);
+    glm_perspective(fov, (float)window->width/window->height, 0.1f, 1000.0f, window->P);
 }
 
 SDL_Surface* loadImage(const char* imageFilename, int desiredChannels){
@@ -315,3 +344,5 @@ void cleanUp(Window* window){
     SDL_DestroyWindow(window->window);
     SDL_Quit();
 }
+
+

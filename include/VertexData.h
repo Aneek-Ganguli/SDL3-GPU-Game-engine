@@ -14,10 +14,8 @@ typedef struct UBO {
 	mat4 mvp;
 } UBO;
 
-typedef struct Transform {
-    vec3 position;
-    vec3 rotation; // radians
-    vec3 scale;
-} Transform;
+void perspective_bounds(float fovy, float aspect, float z,
+                        float *xmin, float *xmax,
+                        float *ymin, float *ymax);
 
 vec2* normalize(float x, float y);

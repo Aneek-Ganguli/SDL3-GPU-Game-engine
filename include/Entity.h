@@ -34,16 +34,19 @@ typedef struct Entity
     SDL_GPUTextureSamplerBinding textureSamplerBinding;
     vec3 position;
     UBO uboPosition;
+    vec3 scale;
 } Entity;
 
 void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 *indicies,
-                  size_t indicies_count, const char* fileName,vec3 position,struct Window *window, struct Entity *e);
+                  size_t indicies_count, const char* fileName,vec3 position,vec3 scale,struct Window *window, struct Entity *e);
 
-void createEntityWithModel(const char* modelFileName,const char* textureFileName,float scale,vec3 position,Window* window, Entity* entity);
+void createEntityWithModel(const char* modelFileName,const char* textureFileName,vec3 scale,vec3 position,Window* window, Entity* entity);
 
 void drawEntity(struct Window *window, Entity *e);
 
 void destroyEntity(Entity* e,Window* window);
+
+void setScale(Entity* e, vec3 scale);
 
 VertexData* load_model(
     const char* path,

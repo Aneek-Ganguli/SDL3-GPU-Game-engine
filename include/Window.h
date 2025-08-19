@@ -9,6 +9,8 @@
 
 static const char* path = NULL;
 
+int windowHeight,windowWidth,fov;
+
 typedef struct Window{
     SDL_Window *window;
     SDL_GPUDevice *device;
@@ -22,16 +24,22 @@ typedef struct Window{
     SDL_GPUCopyPass *copyPass;
     SDL_GPUSampler* sampler;
     int width,height;
+    float fov;
     mat4 P;
 } Window;
 
 struct Window createWindow(const char* title,int width,int height);
-void setShader(Window* window);
+void createGraphicsPipeline(Window* window,float Fov);
 void newFrame(struct Window *window);
 void endFrame(struct Window *window);
-SDL_GPUShader *load_shader(Window* window, const char *filename, SDL_GPUShaderStage stage,
-                           Uint32 sampler_count, Uint32 uniform_buffer_count, Uint32 storage_buffer_count,
-                           Uint32 storage_texture_count);
+SDL_GPUShader* loadShader(
+	Window* window,
+	const char* shaderFilename,
+	Uint32 samplerCount,
+	Uint32 uniformBufferCount,
+	Uint32 storageBufferCount,
+	Uint32 storageTextureCount
+);
 SDL_GPUBuffer *createBuffer(Uint32 size, SDL_GPUBufferUsageFlags usage, struct Window *window);
 void startCopyPass(struct Window *window);
 void endCopyPass(struct Window *window);
