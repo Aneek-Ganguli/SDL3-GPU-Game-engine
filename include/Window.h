@@ -9,7 +9,7 @@
 
 static const char* path = NULL;
 
-int windowHeight,windowWidth,fov;
+static int windowHeight,windowWidth,fov;
 
 typedef struct Window{
     SDL_Window *window;

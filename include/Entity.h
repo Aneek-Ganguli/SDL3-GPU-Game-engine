@@ -9,6 +9,7 @@
 
 #include "Window.h"
 #include "VertexData.h"
+#include "Component.h"
 
 typedef struct Entity
 {
@@ -32,9 +33,7 @@ typedef struct Entity
     SDL_GPUTextureTransferInfo textureTransferInfo;
     SDL_GPUTextureRegion textureRegion;
     SDL_GPUTextureSamplerBinding textureSamplerBinding;
-    vec3 position;
-    UBO uboPosition;
-    vec3 scale;
+    Transform3D transform;
 } Entity;
 
 void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 *indicies,

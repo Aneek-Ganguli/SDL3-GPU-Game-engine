@@ -9,6 +9,7 @@
         "vec2.h": "c",
         "sdl_image.h": "c",
         "postprocess.h": "c",
-        "component.h": "c"
+        "component.h": "c",
+        "algorithm": "c"
     }
 }

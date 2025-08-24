@@ -118,8 +118,9 @@ void createEntity(struct VertexData *vertexData, size_t verticies_count, Uint32 
     // e->position[1] =  position[1];
     // e->position[2] =  position[2];
     
-    glm_vec3_copy(position,e->position);
-    glm_vec3_copy(scale,e->scale);
+    // glm_vec3_copy(position,e->position);
+    // glm_vec3_copy(scale,e->scale);
+    e->transform = initializeTransform3D(position,scale,(vec3){0,0,0},0);
 }
 
 void print_mat4(mat4 m) {
@@ -134,20 +135,19 @@ void print_mat4(mat4 m) {
 }
 
 void drawEntity(struct Window* window, struct Entity* e) {
-    mat4 M;
-    glm_mat4_identity(M);
+    glm_mat4_identity(e->transform.M);
 
     // now position is a vec3 (float[3]) so this works fine
-    glm_translate(M, e->position);
+    glm_translate(e->transform.M, e->transform.position);
     
     // glm_scale(M,(vec3){3,1,1});
     // multiply P * M -> MVP
-    glm_mat4_mul(window->P, M, e->uboPosition.mvp);
+    glm_mat4_mul(window->P, e->transform.M, e->transform.transform.mvp);
 
     SDL_BindGPUVertexBuffers(window->renderPass, 0, &e->vertexBufferBinding, 1);
     SDL_BindGPUIndexBuffer(window->renderPass, &e->indexBufferBinding, SDL_GPU_INDEXELEMENTSIZE_32BIT);
 
-    SDL_PushGPUVertexUniformData(window->commandBuffer, 0, &e->uboPosition, sizeof(e->uboPosition));
+    SDL_PushGPUVertexUniformData(window->commandBuffer, 0, &e->transform.transform, sizeof(e->transform.transform));
 
     SDL_BindGPUFragmentSamplers(window->renderPass, 0, &e->textureSamplerBinding, 1);
     SDL_DrawGPUIndexedPrimitives(window->renderPass, (Uint32)e->indiciesCount, 1, 0, 0, 0);
@@ -267,6 +267,6 @@ void destroyEntity(Entity* e,Window* window){
     }
 }
 
-void setScale(Entity* e,vec3 scale){
-    glm_vec3_copy(scale,e->scale);
-}
+// void setScale(Entity* e,vec3 scale){
+//     glm_vec3_copy(scale,e->scale);
+// }

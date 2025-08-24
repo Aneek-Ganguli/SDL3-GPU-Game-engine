@@ -38,7 +38,7 @@ int main(void){
 
     //createEntity(verticies, verticiesNum, indices, indiciesNum, "res/viking_room.png", (vec3){1,1,1},&window, &ent);
     createEntity(verticies,verticiesNum,indices,(size_t)indiciesNum,"res/viking_room.png",(vec3){0,-1,-3},(vec3){1,1,1},&window,&ent);
-    endCopyPass(&window);
+    endCopyPass(&window); 
 
     mat4 P;
     glm_perspective(glm_rad(70.0f), (float)width/height, 0.1f, 1000.0f, P);
