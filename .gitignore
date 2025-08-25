@@ -1,6 +1,6 @@
 bin/*
 .vscode/*
-examples/working/bin/*
+examples/working/*
 examples/window/bin/*
 errors.txt
 include/cglm/*
@@ -9,3 +9,6 @@ include/cgltf/*
 *.o
 build.bat
 *.a
+include/glm/*
+cmake-build-debug/*
+src/main.cpp
